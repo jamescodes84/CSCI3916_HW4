@@ -87,6 +87,14 @@ router.post('/signin', function (req, res) {
     })
 });
 
+router.post('/reviews', function (req, res){
+    var newReview = new Review();
+    newReview.username = req.body.username;
+    newReview.movieid = req.body.movieid;
+    newReview.review = req.body.review;
+    newReview.rating = req.body.rating;
+})
+
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
