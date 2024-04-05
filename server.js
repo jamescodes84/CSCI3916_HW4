@@ -144,7 +144,68 @@ router.get('/reviews/id', function(req,res){
     }
 });
 
-
+router.route('/movies')
+    .get(authJwtController.isAuthenticated,(req, res) => {
+        Movie.find(function(err, movies){
+            if (err) {
+                res.status(500).send(err);
+            } 
+            res.json(movies);
+        })
+        
+    })
+    .post(authJwtController.isAuthenticated,(req, res) => {
+        // Implementation here
+        let newMovie = new Movie();
+        newMovie.title = req.body.title;
+        newMovie.releaseDate = req.body.releaseDate;
+        newMovie.genre= req.body.genre;
+        newMovie.actors = req.body.actors;
+        newMovie.save(function(err){
+            if (err) {
+                if (err.code == 11000) {
+                    return res.status(400).json({
+                        success: "False",
+                        message: "Title already exists"
+                    });
+                }
+                return res.status(500).send(err);
+            }
+            res.json({message:"Movie Created"});
+        });
+    })
+    .put(authJwtController.isAuthenticated, (req, res) => {
+        Movie.findOneAndUpdate(
+            { title: req.body.title },
+            req.body,
+            { new: true, upsert: true },
+            function(err, movie) {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+                res.json({ message: "Movie Updated", movie: movie });
+            }
+        );
+    })
+    .delete(authJwtController.isAuthenticated, (req, res) => {
+        Movie.findOneAndDelete({ title: req.body.title }, function(err, movie) {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            if (!movie) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Movie not found"
+                });
+            }
+            res.json({ message: "Movie Deleted", movie: movie });
+        });
+    })
+    .all((req, res) => {
+        // Any other HTTP Method
+        // Returns a message stating that the HTTP method is unsupported.
+        res.status(405).send({ message: 'HTTP method not supported.' });
+    });
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
