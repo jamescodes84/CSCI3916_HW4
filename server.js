@@ -99,19 +99,13 @@ router.post('/reviews', function (req, res){
     
         newReview.save(function(err){
             if (err) {
-                if (err.code == 11000)
-                    return res.json({ success: false, message: 'Error Creating Review'});
-                else
-                    return res.json(err);
+               return res.json(err);
             }
 
             res.json({success: true, msg: 'Review Created!'})
         });
     }
     
-    
-
-
 });
 
 router.get('/reviews/id', function(req,res){
@@ -147,7 +141,6 @@ router.get('/reviews/id', function(req,res){
               console.log(result);
             }
           });
-          
     }
 });
 
