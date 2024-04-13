@@ -107,7 +107,7 @@ router.post('/reviews', function (req, res){
     }
     
 });
-
+/*
 router.get('/reviews:id', function(req,res){
     if (!req.body.username || !req.body.movieid || !req.body.review || !req.body.rating) {
         return res.json({ success: false, message: 'Incomplete Review'});
@@ -142,7 +142,7 @@ router.get('/reviews:id', function(req,res){
             }
           });
     }
-});
+});*/
 
 router.route('/movies')
     .get(authJwtController.isAuthenticated,(req, res) => {
