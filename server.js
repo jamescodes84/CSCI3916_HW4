@@ -93,7 +93,7 @@ router.post('/reviews', function (req, res){
     } else {
         var newReview = new Review();
         newReview.username = req.body.username;
-        newReview.movieid = req.body.movieid;
+        newReview.movieId = req.body.movieid;
         newReview.review = req.body.review;
         newReview.rating = req.body.rating;
     
