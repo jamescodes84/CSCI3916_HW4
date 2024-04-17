@@ -103,14 +103,8 @@ router.get('/reviews/:id', function(req, res) {
     });
 });  
 
-router.post('/reviews/', function(req,res) {
-    const newReview = new Review({
-        title: req.body.title,
-        content: req.body.content,
-        rating: req.body.rating
-      });
-});
-/*
+
+
 router.post('/reviews', function(req, res) {
     const newReview = new Review({
       title: req.body.title,
@@ -118,7 +112,7 @@ router.post('/reviews', function(req, res) {
       rating: req.body.rating
     });
   
-    newReview.save(function(err, savedReview) {
+    Review.save(function(err, savedReview) {
       if (err) {
         return res.status(500).send({ message: "Failed to save review." });
       }
@@ -130,7 +124,7 @@ router.post('/reviews', function(req, res) {
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
-*/
+
 
 router.put('/reviews/', function(req, res) {
     const reviewId = req.params.id;
