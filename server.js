@@ -125,13 +125,13 @@ router.post('/reviews', function (req, res){
 });
 
 
-router.put('/reviews/:id', function(req, res) {
+router.put('/reviews/', function(req, res) {
     const reviewId = req.params.id;
     const updateData = {
       title: req.body.title,
       content: req.body.content,
       rating: req.body.rating
-      // Add other fields to update as needed
+     
     };
   
     Review.findByIdAndUpdate(reviewId, updateData, { new: true }, function(err, review) {
