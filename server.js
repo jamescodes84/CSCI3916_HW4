@@ -126,7 +126,7 @@ router.post('/reviews', function (req, res){
                 res.json ({success: true, token: 'JWT ' + token});
             }
             else {
-                res.status(401).send({success: false, msg: 'Authentication failed.'});
+                res.status(401).send({success: false, msg: 'Review Add failed.'});
             }
         })
 
