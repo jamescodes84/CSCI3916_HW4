@@ -88,7 +88,7 @@ router.post('/signin', function (req, res) {
 });
 
 
-router.get('/review/:id', function(req, res) {
+router.get('/reviews/:id', function(req, res) {
     const reviewId = req.params.id;
   
     Review.findById(reviewId, function(err, review) {
