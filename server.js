@@ -102,7 +102,7 @@ router.get('/reviews/:id', function(req, res) {
       res.status(200).json(review);
     });
 });  
-/*
+/
 router.post('/reviews', function (req, res){
     if (!req.body.username || !req.body.movieid || !req.body.review || !req.body.rating){
         return res.json({ success: false, message: 'Incomplete Review'});
@@ -137,7 +137,7 @@ router.post('/reviews', function (req, res){
     }
     
 });
-*/
+
 
 router.put('/reviews/', function(req, res) {
     const reviewId = req.params.id;
