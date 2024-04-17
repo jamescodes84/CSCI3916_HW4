@@ -88,7 +88,7 @@ router.post('/signin', function (req, res) {
 });
 
 /**************** REVIEWS *************************** */
-/*
+
 router.get('/reviews/:id', function(req, res) {
     const reviewId = req.params.id;
   
@@ -139,7 +139,7 @@ router.post('/reviews', function (req, res){
     
 });
 
-*/
+
 router.put('/reviews/', function(req, res) {
     const reviewId = req.params.id;
     const updateData = {
