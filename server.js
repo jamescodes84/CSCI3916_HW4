@@ -87,7 +87,7 @@ router.post('/signin', function (req, res) {
     })
 });
 
-/**************** REVIEWS **************************** */
+/**************** REVIEWS (ChatGPT helped me with my reviews routes)**************************** */
 router.get('/reviews/:id', function(req, res) {
     const reviewId = req.params.id;
   
