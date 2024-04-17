@@ -125,6 +125,32 @@ router.post('/reviews', function (req, res){
 });
 
 
+router.put('/reviews/:id', function(req, res) {
+    const reviewId = req.params.id;
+    const updateData = {
+      title: req.body.title,
+      content: req.body.content,
+      rating: req.body.rating
+      // Add other fields to update as needed
+    };
+  
+    Review.findByIdAndUpdate(reviewId, updateData, { new: true }, function(err, review) {
+      if (err) {
+        return res.status(500).send({ message: "Error updating review." });
+      }
+      if (!review) {
+        return res.status(404).send({ message: "Review not found." });
+      }
+      res.status(200).json(review);
+    });
+  });
+  
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+
+
 router.route('/movies')
     .get(authJwtController.isAuthenticated,(req, res) => {
         Movie.find(function(err, movies){
