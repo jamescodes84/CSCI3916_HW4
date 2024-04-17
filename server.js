@@ -119,10 +119,10 @@ router.post('/reviews', function (req, res){
             }
 
 
-        user.findOne(req.movieId, function(isMatch) {
+        Review.findOne(req.movieId, function(isMatch) {
             if (isMatch) {
                 var reviewToken = { id: newReview.id, movieId: newReview.movieId };
-                var token = jwt.sign(userToken, process.env.SECRET_KEY);
+                var token = jwt.sign(reviewToken, process.env.SECRET_KEY);
                 res.json ({success: true, token: 'JWT ' + token});
             }
             else {
