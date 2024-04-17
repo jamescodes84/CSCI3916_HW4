@@ -102,7 +102,7 @@ router.get('/reviews/:id', function(req, res) {
       res.status(200).json(review);
     });
 });  
-/
+
 router.post('/reviews', function(req, res) {
     const newReview = new Review({
       title: req.body.title,
@@ -121,7 +121,7 @@ router.post('/reviews', function(req, res) {
   const port = process.env.PORT || 3000;
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
-  });
+});
 
 
 
