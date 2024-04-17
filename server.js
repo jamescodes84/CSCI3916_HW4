@@ -103,40 +103,30 @@ router.get('/reviews/:id', function(req, res) {
     });
 });  
 /
-router.post('/reviews', function (req, res){
-    if (!req.body.username || !req.body.movieid || !req.body.review || !req.body.rating){
-        return res.json({ success: false, message: 'Incomplete Review'});
-    } else {
-        var newReview = new Review();
-        newReview.username = req.body.username;
-        newReview.movieId = req.body.movieid;
-        newReview.review = req.body.review;
-        newReview.rating = req.body.rating;
-    
-        newReview.save(function(err){
-           /* if (err) {
-               return res.json(err);
-            }*/
-
-/*
-        Review.findOne(req.movieId, function(isMatch) {
-            if (isMatch) {
-                var reviewToken = { id: newReview.id, movieId: newReview.movieId };
-                var token = jwt.sign(reviewToken, process.env.SECRET_KEY);
-                res.json ({success: true, token: 'JWT ' + token});
-            }
-            else {
-                res.status(401).send({success: false, msg: 'Review Add failed.'});
-            }
-        })
-*/
+router.post('/reviews', function(req, res) {
+    const newReview = new Review({
+      title: req.body.title,
+      content: req.body.content,
+      rating: req.body.rating
+    });
+  
+    newReview.save(function(err, savedReview) {
+      if (err) {
+        return res.status(500).send({ message: "Failed to save review." });
+      }
+      res.status(201).send(savedReview);
+    });
+  });
+  
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
 
 
-          res.json({success: true, msg: 'Review Created!'})
-        });
-    }
-    
-});
+
+
+
 
 
 router.put('/reviews/', function(req, res) {
