@@ -88,6 +88,7 @@ router.post('/signin', function (req, res) {
 });
 
 /**************** REVIEWS *************************** */
+/*
 router.get('/reviews/:id', function(req, res) {
     const reviewId = req.params.id;
   
@@ -102,7 +103,7 @@ router.get('/reviews/:id', function(req, res) {
     });
   });
   
-/*
+
 router.post('/reviews', function (req, res){
     if (!req.body.username || !req.body.movieid || !req.body.review || !req.body.rating){
         return res.json({ success: false, message: 'Incomplete Review'});
@@ -137,7 +138,7 @@ router.post('/reviews', function (req, res){
     }
     
 });
-*/
+
 
 router.put('/reviews/', function(req, res) {
     const reviewId = req.params.id;
@@ -163,7 +164,7 @@ router.put('/reviews/', function(req, res) {
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
   });
-
+*/
 
 router.route('/movies')
     .get(authJwtController.isAuthenticated,(req, res) => {
