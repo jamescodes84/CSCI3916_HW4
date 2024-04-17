@@ -104,24 +104,27 @@ router.get('/reviews/:id', function(req, res) {
 });  
 
 
-
-router.post('/reviews', function(req, res) {
+router.post('/reviews', verifyToken, function(req, res) {
     const newReview = new Review({
       title: req.body.title,
       content: req.body.content,
       rating: req.body.rating
+      // include other fields as needed
     });
   
-    newReview.save(function(err, savedReview) {
+    newReview.save(function(err, review) {
       if (err) {
         return res.status(500).send({ message: "Failed to save review." });
       }
-      res.status(201).send(savedReview);
+      res.status(201).send({ message: 'Review added successfully', data: review });
     });
   });
   
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
   
-
 
 router.put('/reviews/', function(req, res) {
     const reviewId = req.params.id;
