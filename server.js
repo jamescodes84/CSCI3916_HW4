@@ -118,7 +118,7 @@ router.post('/reviews', function (req, res){
                return res.json(err);
             }
 
-//
+/*
         Review.findOne(req.movieId, function(isMatch) {
             if (isMatch) {
                 var reviewToken = { id: newReview.id, movieId: newReview.movieId };
@@ -129,7 +129,7 @@ router.post('/reviews', function (req, res){
                 res.status(401).send({success: false, msg: 'Review Add failed.'});
             }
         })
-//
+*/
 
 
           res.json({success: true, msg: 'Review Created!'})
