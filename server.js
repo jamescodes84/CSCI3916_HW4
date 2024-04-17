@@ -102,7 +102,7 @@ router.get('/reviews/:id', function(req, res) {
     });
   });
   
-//
+/*
 router.post('/reviews', function (req, res){
     if (!req.body.username || !req.body.movieid || !req.body.review || !req.body.rating){
         return res.json({ success: false, message: 'Incomplete Review'});
@@ -118,7 +118,7 @@ router.post('/reviews', function (req, res){
                return res.json(err);
             }
 
-/*
+//
         Review.findOne(req.movieId, function(isMatch) {
             if (isMatch) {
                 var reviewToken = { id: newReview.id, movieId: newReview.movieId };
@@ -129,7 +129,7 @@ router.post('/reviews', function (req, res){
                 res.status(401).send({success: false, msg: 'Review Add failed.'});
             }
         })
-*/
+//
 
 
           res.json({success: true, msg: 'Review Created!'})
@@ -137,7 +137,7 @@ router.post('/reviews', function (req, res){
     }
     
 });
-
+*/
 
 router.put('/reviews/', function(req, res) {
     const reviewId = req.params.id;
