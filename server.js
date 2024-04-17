@@ -112,7 +112,7 @@ router.post('/reviews', function(req, res) {
       rating: req.body.rating
     });
   
-    Review.save(function(err, savedReview) {
+    newReview.save(function(err, savedReview) {
       if (err) {
         return res.status(500).send({ message: "Failed to save review." });
       }
@@ -120,10 +120,7 @@ router.post('/reviews', function(req, res) {
     });
   });
   
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+  
 
 
 router.put('/reviews/', function(req, res) {
