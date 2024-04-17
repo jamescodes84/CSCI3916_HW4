@@ -87,7 +87,7 @@ router.post('/signin', function (req, res) {
     })
 });
 
-
+/**************** REVIEWS **************************** */
 router.get('/reviews/:id', function(req, res) {
     const reviewId = req.params.id;
   
@@ -102,7 +102,6 @@ router.get('/reviews/:id', function(req, res) {
     });
   });
   
-
 
 router.post('/reviews', function (req, res){
     if (!req.body.username || !req.body.movieid || !req.body.review || !req.body.rating){
@@ -124,42 +123,7 @@ router.post('/reviews', function (req, res){
     }
     
 });
-/*
-router.get('/reviews:id', function(req,res){
-    if (!req.body.username || !req.body.movieid || !req.body.review || !req.body.rating) {
-        return res.json({ success: false, message: 'Incomplete Review'});
-    } 
-    Reviews.findOne({ movieid: req.body.movieid }).select('movieid username review rating').exec(function(err, reviewOut) {
-        if (err) {
-            res.send(err);
-        }
 
-        res.json ({movieid: movieOut.movieid , username: movieOut.username, rating: movieOut.rating, review: movieOut.review});
-       
-    })
-
-    if (req.query.reviews == True) {
-        Order.aggregate([
-            {
-              $match: { _id: orderId } // replace orderId with the actual order id
-            },
-            {
-              $lookup: {
-                from: "items", // name of the foreign collection
-                localField: "items", // field in the orders collection
-                foreignField: "_id", // field in the items collection
-                as: "itemDetails" // output array where the joined items will be placed
-              }
-            }
-          ]).exec(function(err, result) {
-            if (err) {
-                res.send(err);
-            } else {
-              console.log(result);
-            }
-          });
-    }
-});*/
 
 router.route('/movies')
     .get(authJwtController.isAuthenticated,(req, res) => {
@@ -228,3 +192,48 @@ app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
 
 
+
+
+
+
+
+
+
+
+
+/*
+router.get('/reviews:id', function(req,res){
+    if (!req.body.username || !req.body.movieid || !req.body.review || !req.body.rating) {
+        return res.json({ success: false, message: 'Incomplete Review'});
+    } 
+    Reviews.findOne({ movieid: req.body.movieid }).select('movieid username review rating').exec(function(err, reviewOut) {
+        if (err) {
+            res.send(err);
+        }
+
+        res.json ({movieid: movieOut.movieid , username: movieOut.username, rating: movieOut.rating, review: movieOut.review});
+       
+    })
+
+    if (req.query.reviews == True) {
+        Order.aggregate([
+            {
+              $match: { _id: orderId } // replace orderId with the actual order id
+            },
+            {
+              $lookup: {
+                from: "items", // name of the foreign collection
+                localField: "items", // field in the orders collection
+                foreignField: "_id", // field in the items collection
+                as: "itemDetails" // output array where the joined items will be placed
+              }
+            }
+          ]).exec(function(err, result) {
+            if (err) {
+                res.send(err);
+            } else {
+              console.log(result);
+            }
+          });
+    }
+});*/
