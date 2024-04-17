@@ -87,6 +87,23 @@ router.post('/signin', function (req, res) {
     })
 });
 
+
+router.get('/review/:id', function(req, res) {
+    const reviewId = req.params.id;
+  
+    Review.findById(reviewId, function(err, review) {
+      if (err) {
+        return res.status(500).send({ message: "Error retrieving review." });
+      }
+      if (!review) {
+        return res.status(404).send({ message: "Review not found." });
+      }
+      res.status(200).json(review);
+    });
+  });
+  
+
+
 router.post('/reviews', function (req, res){
     if (!req.body.username || !req.body.movieid || !req.body.review || !req.body.rating){
         return res.json({ success: false, message: 'Incomplete Review'});
