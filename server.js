@@ -114,9 +114,9 @@ router.post('/reviews', function (req, res){
         newReview.rating = req.body.rating;
     
         newReview.save(function(err){
-            if (err) {
+           /* if (err) {
                return res.json(err);
-            }
+            }*/
 
 /*
         Review.findOne(req.movieId, function(isMatch) {
