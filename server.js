@@ -87,7 +87,7 @@ router.post('/signin', function (req, res) {
     })
 });
 
-/**************** REVIEWS (ChatGPT helped me with my reviews routes)**************************** */
+/**************** REVIEWS *************************** */
 router.get('/reviews/:id', function(req, res) {
     const reviewId = req.params.id;
   
@@ -118,7 +118,21 @@ router.post('/reviews', function (req, res){
                return res.json(err);
             }
 
-            res.json({success: true, msg: 'Review Created!'})
+
+        user.findOne(req.movieId, function(isMatch) {
+            if (isMatch) {
+                var reviewToken = { id: newReview.id, movieId: newReview.movieId };
+                var token = jwt.sign(userToken, process.env.SECRET_KEY);
+                res.json ({success: true, token: 'JWT ' + token});
+            }
+            else {
+                res.status(401).send({success: false, msg: 'Authentication failed.'});
+            }
+        })
+
+
+
+          //  res.json({success: true, msg: 'Review Created!'})
         });
     }
     
