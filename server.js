@@ -102,6 +102,14 @@ router.get('/reviews/:id', function(req, res) {
       res.status(200).json(review);
     });
 });  
+
+router.post('/reviews/', function(req,res) {
+    const newReview = new Review({
+        title: req.body.title,
+        content: req.body.content,
+        rating: req.body.rating
+      });
+});
 /*
 router.post('/reviews', function(req, res) {
     const newReview = new Review({
