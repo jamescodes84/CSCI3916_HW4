@@ -42,6 +42,24 @@ function getJSONObjectForMovieRequirement(req) {
     return json;
 }
 
+function getJSONObjectForReviewRequirement(req) {
+    var json = {
+        headers: "No headers",
+        key: process.env.UNIQUE_KEY,
+        body: "No body"
+    };
+
+    if (req.body != null) {
+        json.body = req.body;
+    }
+
+    if (req.headers != null) {
+        json.headers = req.headers;
+    }
+
+    return json;
+}
+
 router.post('/signup', function(req, res) {
     if (!req.body.username || !req.body.password) {
         res.json({success: false, msg: 'Please include both username and password to signup.'})
@@ -88,7 +106,7 @@ router.post('/signin', function (req, res) {
 });
 
 /**************** REVIEWS *************************** */
-
+/*
 router.get('/reviews/:id', function(req, res) {
     const reviewId = req.params.id;
   
@@ -102,6 +120,47 @@ router.get('/reviews/:id', function(req, res) {
       res.status(200).json(review);
     });
 });  
+
+ THIS POST WORKS
+router.post('/reviews', function(req, res) {
+    const newReview = new Review({
+      title: req.body.title,
+      content: req.body.content,
+      rating: req.body.rating
+    });
+  
+    newReview.save(function(err, savedReview) {
+      if (err) {
+        return res.status(500).send({ message: "Failed to save review." });
+      }
+      res.status(201).send(savedReview);
+    });
+  });
+*/
+
+
+
+router.route('/reviews')
+.get('/reviews/:id', function(req, res) {
+    const reviewId = req.params.id;
+  
+    Review.findById(reviewId, function(err, review) {
+      if (err) {
+        return res.status(500).send({ message: "Error retrieving review." });
+      }
+      if (!review) {
+        return res.status(404).send({ message: "Review not found." });
+      }
+      res.status(200).json(review);
+    });
+})
+
+.post(authJwtController.isAuthenticated, (req, res) =>{
+    var o = getJSONObjectForReviewRequirement(req);
+    o.status = 200;
+    o.message = 'Review created.'
+})
+
 
 
 router.post('/reviews', function(req, res) {
@@ -118,7 +177,10 @@ router.post('/reviews', function(req, res) {
       res.status(201).send(savedReview);
     });
   });
-  
+
+
+
+
 
 router.put('/reviews/', function(req, res) {
     const reviewId = req.params.id;
