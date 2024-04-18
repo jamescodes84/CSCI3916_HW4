@@ -106,8 +106,8 @@ router.post('/signin', function (req, res) {
 });
 
 /**************** REVIEWS *************************** */
-/*
-router.get('/reviews/:id', function(req, res) {
+
+/*router.get('/reviews/:id', function(req, res) {
     const reviewId = req.params.id;
   
     Review.findById(reviewId, function(err, review) {
@@ -121,7 +121,7 @@ router.get('/reviews/:id', function(req, res) {
     });
 });  
 
- THIS POST WORKS
+ THIS POST WORKS (no jwt auth)*/
 router.post('/reviews', function(req, res) {
     const newReview = new Review({
       title: req.body.title,
@@ -136,11 +136,12 @@ router.post('/reviews', function(req, res) {
       res.status(201).send(savedReview);
     });
   });
-*/
 
+/*
 router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
     const newReview = new Review({
         title: req.body.title,
+        moviId: req.body.moviId,
         content: req.body.content,
         rating: req.body.rating
       });
@@ -153,7 +154,7 @@ router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
       });
   });
 
-
+*/
 router.put((req, res)=> {
     const reviewId = req.params.id;
     const updateData = {
