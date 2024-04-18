@@ -140,8 +140,7 @@ router.post('/reviews', function(req, res) {
 
 
 
-router.route('/reviews')
-.get('/reviews/:id', function(req, res) {
+router.get('/reviews/:id', function(req, res) {
     const reviewId = req.params.id;
   
     Review.findById(reviewId, function(err, review) {
@@ -153,9 +152,10 @@ router.route('/reviews')
       }
       res.status(200).json(review);
     });
-})
-/*
-.post(authJwtController.isAuthenticated, (req, res) =>{
+});
+
+
+router.post(authJwtController.isAuthenticated, (req, res) =>{
 
     const newReview = new Review({
         title: req.body.title,
@@ -174,8 +174,8 @@ router.route('/reviews')
     o.status = 200;
     o.message = 'Review created.'
     res.json(o);
-})
-*/
+});
+
 
 
 
