@@ -157,34 +157,25 @@ router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
 
 
 router.put((req, res)=> {
+    var o = getJSONObjectForReviewRequirement(req);
+    o.status = 200;
+    o.message = 'Review created.'
+    res.json(o);
+  })
+
+router.get('/reviews/:id', function(req, res) {
+    
     const reviewId = req.params.id;
-    const updateData = {
-      title: req.body.title,
-      content: req.body.content,
-      rating: req.body.rating
-     
-    };
   
-    Review.findByIdAndUpdate(reviewId, updateData, { new: true }, function(err, review) {
+    Review.findById(reviewId, function(err, review) {
       if (err) {
-        return res.status(500).send({ message: "Error updating review." });
+        return res.status(500).send({ message: "Error retrieving review." });
       }
       if (!review) {
         return res.status(404).send({ message: "Review not found." });
       }
       res.status(200).json(review);
     });
-  })
-
-router.get('/reviews/:id', function(req, res) {
-    
-    var o = getJSONObjectForReviewRequirement(req);
-    o.save();
-    o.status = 200;
-    o.message = 'Review created.'
-    res.json(o);
-    
-   
 });
 /*
 router.route('reviews')
