@@ -139,20 +139,19 @@ router.post('/reviews', function(req, res) {
 */
 
 router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
-    
-    const newReview = new Review({
-        movieId: req.body.movieId,
-        username:req.body.username,
-        review: req.body.review,
-        rating: req.body.rating
-      });
-    
-      newReview.save(function(err, savedReview) {
-        if (err) {
-          return res.status(500).send({ message: "Failed to save review." });
-        }
-        res.status(201).send(savedReview);
-      });
+
+    // Create a new review from the request body
+  const newReview = new Review({
+    movieId: req.body.movieId,   // Assuming a valid MongoDB ObjectId is provided
+    username: req.body.username,
+    review: req.body.review,
+    rating: req.body.rating
+  });
+
+  // Save the new review to the database
+  newReview.save()
+    .then(savedReview => res.status(201).json(savedReview))  // Successfully saved
+    .catch(error => res.status(500).json({ message: "Failed to save review", error: error.message }));  // Error handling
   });
 
 
