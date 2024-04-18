@@ -139,23 +139,19 @@ router.post('/reviews', function(req, res) {
 */
 
 router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
-    if (!req.body.username || !req.body.movieId || !req.body.review || !req.body.rating){
-        return res.json({ success: false, message: 'Incomplete Review'});
-    } else {
-        var newReview = new Review();
-        newReview.username = req.body.username;
-        newReview.movieId = req.body.movieid;
-        newReview.review = req.body.review;
-        newReview.rating = req.body.rating;
-    
-        newReview.save(function(err){
-            if (err) {
-               return res.json(err);
-            }
+    var newReview = new Review();
+    newReview.username = req.body.username;
+    newReview.movieId = req.body.movieid;
+    newReview.review = req.body.review;
+    newReview.rating = req.body.rating;
 
-            res.json({success: true, msg: 'Review Created!'})
-        });
-    }
+    newReview.save(function(err){
+        if (err) {
+           return res.json(err);
+        }
+
+        res.json({success: true, msg: 'Review Created!'})
+    });
   });
 
 
