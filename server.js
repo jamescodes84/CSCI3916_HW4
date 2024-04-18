@@ -139,11 +139,15 @@ router.post('/reviews', function(req, res) {
 */
 
 router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
-        var o = getJSONObjectForReviewRequirement(req);
-        o.body = req.body;
-        o.status = 200;
-        o.message = "movie updated";
-        res.json(o);
+        var newReview = new Review();
+        newReview.movieId = req.body.movieId;
+        newReview.username = req.body.username;
+        newReview.review = req.body.review;
+        newReview.rating = req.body.rating;
+
+        newReview.save();
+
+        res.status(200).json({message: "Review Created successfully."});
     
   });
 
