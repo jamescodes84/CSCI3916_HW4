@@ -121,7 +121,7 @@ router.get('/reviews/:id', function(req, res) {
     });
 });  
 
- THIS POST WORKS
+ THIS POST WORKS*/
 router.post('/reviews', function(req, res) {
     const newReview = new Review({
       title: req.body.title,
@@ -136,7 +136,7 @@ router.post('/reviews', function(req, res) {
       res.status(201).send(savedReview);
     });
   });
-*/
+
 
 
 
@@ -153,7 +153,7 @@ router.get('/reviews/:id', function(req, res) {
       res.status(200).json(review);
     });
 });
-
+/*
 router.route('reviews')
 .post(authJwtController.isAuthenticated, (req, res) =>{
     const newReview = new Review({
@@ -169,13 +169,13 @@ router.route('reviews')
         res.status(201).send(savedReview);
       });
       res.status(201).send(savedReview);
-/*
+
     var o = getJSONObjectForReviewRequirement(req);
     o.status = 200;
     o.message = 'Review created.'
-    res.json(o);*/
+    res.json(o);
 });
-
+*/
 
 
 
