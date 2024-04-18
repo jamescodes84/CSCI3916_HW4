@@ -139,19 +139,25 @@ router.post('/reviews', function(req, res) {
 */
 
 router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
-    var newReview = new Review();
-    newReview.username = req.body.username;
-    newReview.movieId = req.body.movieId;
-    newReview.review = req.body.review;
-    newReview.rating = req.body.rating;
+    // Create a new review using the request body
+  const newReview = new Review({
+    movieId: req.body.movieId,
+    username: req.body.username,
+    review: req.body.review,
+    rating: req.body.rating
+  });
 
-    newReview.save(function(err){
-        if (err) {
-           return res.json(err);
-        }
-
-        res.json({success: true, msg: 'Review Created!'})
+  // Save the new review to the database
+  newReview.save()
+    .then(review => {
+      // Send a response back to the client with the saved review
+      res.status(201).json(review);
+    })
+    .catch(err => {
+      // If an error occurs, send an error response
+      res.status(400).json({ message: "Failed to save review", error: err });
     });
+
   });
 
 
