@@ -139,26 +139,18 @@ router.post('/reviews', function(req, res) {
 */
 
 router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
-        var newReview = new Review();
-        newReview.movieId = req.body.movieId;
-        newReview.username = req.body.username;
-        newReview.review = req.body.review;
-        newReview.rating = req.body.rating;
-
-        newReview.save(function(err){
-            if (err) {
-                if (err.code == 11000) {
-                    return res.status(400).json({
-                        success: "False",
-                        message: "Title already exists"
-                    });
-                }
-                return res.status(500).send(err);
-            }
-            res.json({message:"Movie Created"});
-        });;
-
-        res.status(200).json({newReview});
+    const newReview = new Review({
+        title: req.body.title,
+        content: req.body.content,
+        rating: req.body.rating
+      });
+    
+      newReview.save(function(err, savedReview) {
+        if (err) {
+          return res.status(500).send({ message: "Failed to save review." });
+        }
+        res.status(201).send(savedReview);
+      });
     
   });
 
