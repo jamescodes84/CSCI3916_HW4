@@ -149,7 +149,7 @@ router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
         if (err) {
           return res.status(500).send({ message: "Failed to save review." });
         }
-        res.status(201).send({message: "Review Saved Successfully."});
+        res.status(201).send({message: "Review created!"});
       });
   });
 
