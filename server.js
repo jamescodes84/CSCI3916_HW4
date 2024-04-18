@@ -138,8 +138,7 @@ router.post('/reviews', function(req, res) {
   });
 */
 
-router.route('reviews')
-.post(authJwtController.isAuthenticated, (req, res) => {
+router.post('reviews', authJwtController.isAuthenticated, (req, res) => {
     var o = getJSONObjectForReviewRequirement(req);
     o.status = 200;
     o.message = 'Review created.'
