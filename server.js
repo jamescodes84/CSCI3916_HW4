@@ -107,7 +107,7 @@ router.post('/signin', function (req, res) {
 
 /**************** REVIEWS *************************** */
 
-/*router.get('/reviews/:id', function(req, res) {
+router.get('/reviews/:id', function(req, res) {
     const reviewId = req.params.id;
   
     Review.findById(reviewId, function(err, review) {
@@ -120,7 +120,7 @@ router.post('/signin', function (req, res) {
       res.status(200).json(review);
     });
 });  
-
+/*
  THIS POST WORKS (no jwt auth)
 router.post('/reviews', function(req, res) {
     const newReview = new Review({
