@@ -141,7 +141,7 @@ router.post('/reviews', function(req, res) {
 router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
     var newReview = new Review();
     newReview.username = req.body.username;
-    newReview.movieId = req.body.movieid;
+    newReview.movieId = req.body.movieId;
     newReview.review = req.body.review;
     newReview.rating = req.body.rating;
 
