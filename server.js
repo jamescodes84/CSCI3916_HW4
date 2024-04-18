@@ -179,7 +179,7 @@ router.post(authJwtController.isAuthenticated, (req, res) =>{
 
 
 
-.put('/reviews/', function(req, res) {
+router.put('/reviews/', function(req, res) {
     const reviewId = req.params.id;
     const updateData = {
       title: req.body.title,
