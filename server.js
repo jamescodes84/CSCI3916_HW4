@@ -157,26 +157,17 @@ router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
 
 
 router.put((req, res)=> {
-    var o = getJSONObjectForReviewRequirement(req);
-    var newReview = new Review();
-    newReview.moviId = o.moviId;
-    newReview.username = o.username;
-    newReview.rating = o.rating;
-    newReview.review = o.review;
-
-    newReview.save();
-    o.status = 200;
-    o.message = 'Review created.'
-    res.json(o);
-  })
-
-router.get('/reviews/:id', function(req, res) {
-    
     const reviewId = req.params.id;
+    const updateData = {
+      title: req.body.title,
+      content: req.body.content,
+      rating: req.body.rating
+     
+    };
   
-    Review.findById(reviewId, function(err, review) {
+    Review.findByIdAndUpdate(reviewId, updateData, { new: true }, function(err, review) {
       if (err) {
-        return res.status(500).send({ message: "Error retrieving review." });
+        return res.status(500).send({ message: "Error updating review." });
       }
       if (!review) {
         return res.status(404).send({ message: "Review not found." });
@@ -247,24 +238,10 @@ router.route('/movies')
         
     })
     .post(authJwtController.isAuthenticated,(req, res) => {
-        // Implementation here
-        let newMovie = new Movie();
-        newMovie.title = req.body.title;
-        newMovie.releaseDate = req.body.releaseDate;
-        newMovie.genre= req.body.genre;
-        newMovie.actors = req.body.actors;
-        newMovie.save(function(err){
-            if (err) {
-                if (err.code == 11000) {
-                    return res.status(400).json({
-                        success: "False",
-                        message: "Title already exists"
-                    });
-                }
-                return res.status(500).send(err);
-            }
-            res.json({message:"Movie Created"});
-        });
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = "movie updated";
+        res.json(o);
     })
     .put(authJwtController.isAuthenticated, (req, res) => {
         Movie.findOneAndUpdate(
