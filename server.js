@@ -139,25 +139,20 @@ router.post('/reviews', function(req, res) {
 */
 
 router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
-    // Create a new review using the request body
-  const newReview = new Review({
-    movieId: req.body.movieId,
-    username: req.body.username,
-    review: req.body.review,
-    rating: req.body.rating
-  });
+    var newReview = new Review();
+    newReview.username = req.body.username;
+    newReview.movieId = req.body.movieId;
+    newReview.review = req.body.review;
+    newReview.rating = req.body.rating;
 
-  // Save the new review to the database
-  newReview.save()
-    .then(review => {
-      // Send a response back to the client with the saved review
-      res.status(201).json(review);
-    })
-    .catch(err => {
-      // If an error occurs, send an error response
-      res.status(400).json({ message: "Failed to save review", error: err });
+    newReview.save(function(err){
+        if (err) {
+           return res.json(err);
+        }
+
+        res.json({success: true, msg: 'Review Created!'})
     });
-
+    
   });
 
 
@@ -182,17 +177,14 @@ router.put((req, res)=> {
   })
 
 router.get('/reviews/:id', function(req, res) {
-    const reviewId = req.params.id;
-  
-    Review.findById(reviewId, function(err, review) {
-      if (err) {
-        return res.status(500).send({ message: "Error retrieving review." });
-      }
-      if (!review) {
-        return res.status(404).send({ message: "Review not found." });
-      }
-      res.status(200).json(review);
-    });
+    
+    var o = getJSONObjectForReviewRequirement(req);
+    o.save();
+    o.status = 200;
+    o.message = 'Review created.'
+    res.json(o);
+    
+   
 });
 /*
 router.route('reviews')
