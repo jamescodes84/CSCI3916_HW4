@@ -145,9 +145,20 @@ router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
         newReview.review = req.body.review;
         newReview.rating = req.body.rating;
 
-        newReview.save();
+        newReview.save(function(err){
+            if (err) {
+                if (err.code == 11000) {
+                    return res.status(400).json({
+                        success: "False",
+                        message: "Title already exists"
+                    });
+                }
+                return res.status(500).send(err);
+            }
+            res.json({message:"Movie Created"});
+        });;
 
-        res.status(200).json({message: "Review Created successfully."});
+        res.status(200).json({newReview});
     
   });
 
