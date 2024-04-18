@@ -139,19 +139,10 @@ router.post('/reviews', function(req, res) {
 */
 
 router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
-    var newReview = new Review();
-    newReview.username = req.body.username;
-    newReview.movieId = req.body.movieId;
-    newReview.review = req.body.review;
-    newReview.rating = req.body.rating;
-
-    newReview.save(function(err){
-        if (err) {
-           return res.json(err);
-        }
-
-        res.json({success: true, msg: 'Review Created!'})
-    });
+    var o = getJSONObjectForReviewRequirement(req);
+        o.status = 200;
+        o.message = "movie updated";
+        res.json(o);
     
   });
 
@@ -238,10 +229,24 @@ router.route('/movies')
         
     })
     .post(authJwtController.isAuthenticated,(req, res) => {
-        var o = getJSONObjectForMovieRequirement(req);
-        o.status = 200;
-        o.message = "movie updated";
-        res.json(o);
+        // Implementation here
+        let newMovie = new Movie();
+        newMovie.title = req.body.title;
+        newMovie.releaseDate = req.body.releaseDate;
+        newMovie.genre= req.body.genre;
+        newMovie.actors = req.body.actors;
+        newMovie.save(function(err){
+            if (err) {
+                if (err.code == 11000) {
+                    return res.status(400).json({
+                        success: "False",
+                        message: "Title already exists"
+                    });
+                }
+                return res.status(500).send(err);
+            }
+            res.json({message:"Movie Created"});
+        });
     })
     .put(authJwtController.isAuthenticated, (req, res) => {
         Movie.findOneAndUpdate(
