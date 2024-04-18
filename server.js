@@ -121,7 +121,7 @@ router.get('/reviews/:id', function(req, res) {
     });
 });  
 
- THIS POST WORKS*/
+ THIS POST WORKS
 router.post('/reviews', function(req, res) {
     const newReview = new Review({
       title: req.body.title,
@@ -136,9 +136,24 @@ router.post('/reviews', function(req, res) {
       res.status(201).send(savedReview);
     });
   });
+*/
 
 
+router.route('/reviews')
+.post(authJwtController,(req,res)=>{
+    const newReview = new Review({
+        title: req.body.title,
+        content: req.body.content,
+        rating: req.body.rating
+      });
 
+      newReview.save(function(err, savedReview) {
+        if (err) {
+          return res.status(500).send({ message: "Failed to save review." });
+        }
+        res.status(201).send(savedReview);
+      });
+})
 
 router.get('/reviews/:id', function(req, res) {
     const reviewId = req.params.id;
