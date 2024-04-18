@@ -154,7 +154,7 @@ router.route('/reviews')
       res.status(200).json(review);
     });
 })
-
+/*
 .post(authJwtController.isAuthenticated, (req, res) =>{
 
     const newReview = new Review({
@@ -175,7 +175,7 @@ router.route('/reviews')
     o.message = 'Review created.'
     res.json(o);
 })
-
+*/
 
 
 
