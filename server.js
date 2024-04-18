@@ -154,8 +154,8 @@ router.get('/reviews/:id', function(req, res) {
     });
 });
 
-
-router.post(authJwtController.isAuthenticated, (req, res) =>{
+router.route('reviews')
+.post(authJwtController.isAuthenticated, (req, res) =>{
 
     const newReview = new Review({
         title: req.body.title,
