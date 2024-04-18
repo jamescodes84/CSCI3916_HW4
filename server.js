@@ -139,7 +139,7 @@ router.post('/reviews', function(req, res) {
 */
 
 router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
-    if (!req.body.username || !req.body.movieid || !req.body.review || !req.body.rating){
+    if (!req.body.username || !req.body.movieId || !req.body.review || !req.body.rating){
         return res.json({ success: false, message: 'Incomplete Review'});
     } else {
         var newReview = new Review();
