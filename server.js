@@ -138,30 +138,23 @@ router.post('/reviews', function(req, res) {
   });
 */
 
-
-router.route('/reviews')
-.post(authJwtController,(req,res)=>{
-    var o = getJSONObjectForReviewRequirement(req);
-    o.status = 200;
-    o.message = 'Review created.'
-    res.json(o);
-
-    
+router.post('/reviews',authJwtController, (req, res) => {
     const newReview = new Review({
-        title: req.body.title,
-        content: req.body.content,
-        rating: req.body.rating
-      });
+      title: req.body.title,
+      content: req.body.content,
+      rating: req.body.rating
+    });
+  
+    newReview.save(function(err, savedReview) {
+      if (err) {
+        return res.status(500).send({ message: "Failed to save review." });
+      }
+      res.status(201).send(savedReview);
+    });
+  });
 
-      newReview.save(function(err, savedReview) {
-        if (err) {
-          return res.status(500).send({ message: "Failed to save review." });
-        }
-        res.status(201).send(savedReview);
-      });
-})
 
-.put((req, res)=> {
+router.put((req, res)=> {
     const reviewId = req.params.id;
     const updateData = {
       title: req.body.title,
