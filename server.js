@@ -155,6 +155,26 @@ router.route('/reviews')
       });
 })
 
+.put((req, res)=> {
+    const reviewId = req.params.id;
+    const updateData = {
+      title: req.body.title,
+      content: req.body.content,
+      rating: req.body.rating
+     
+    };
+  
+    Review.findByIdAndUpdate(reviewId, updateData, { new: true }, function(err, review) {
+      if (err) {
+        return res.status(500).send({ message: "Error updating review." });
+      }
+      if (!review) {
+        return res.status(404).send({ message: "Review not found." });
+      }
+      res.status(200).json(review);
+    });
+  })
+
 router.get('/reviews/:id', function(req, res) {
     const reviewId = req.params.id;
   
@@ -194,7 +214,7 @@ router.route('reviews')
 
 
 
-router.put('/reviews/', function(req, res) {
+/*router.put('/reviews/', function(req, res) {
     const reviewId = req.params.id;
     const updateData = {
       title: req.body.title,
@@ -212,7 +232,7 @@ router.put('/reviews/', function(req, res) {
       }
       res.status(200).json(review);
     });
-  });
+  });*/
   
  /* const port = process.env.PORT || 3000;
   app.listen(port, () => {
