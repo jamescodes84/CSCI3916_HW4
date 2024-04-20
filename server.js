@@ -257,7 +257,7 @@ router.route('/movies')
         res.status(405).send({ message: 'HTTP method not supported.' });
     });
 
-
+/*
     router.get('/movies/:id', (req, res) => {
         const movieId = req.params.id;
         const includeReviews = req.query.review === 'true';
@@ -301,7 +301,7 @@ router.route('/movies')
                 res.status(500).json({ message: "Error fetching movie", error: err });
             });
     });
-
+*/
   
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
