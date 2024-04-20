@@ -263,7 +263,7 @@ router.route('/movies')
         const includeReviews = req.query.review === 'true';
 
         if (includeReviews) {
-            res.json({message: "aggregation does not work"})
+           
             Movie.aggregate([
                 {
                     $match: {'_id': mongoose.Types.ObjectId(req.params.id)}
@@ -286,7 +286,7 @@ router.route('/movies')
                 }
               });
 
-             
+
 
         }
 
