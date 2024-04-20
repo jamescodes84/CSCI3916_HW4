@@ -260,40 +260,41 @@ router.route('/movies')
 
     router.get('/movies/:id', (req, res) => {
       const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+          return res.status(400).json({ success: "False", message: "Invalid ID format" });
+      }
       const includeReviews = req.query.reviews === 'true';
   
       let aggregationStages = [
           {
-              $match: { _id: mongoose.Types.ObjectId(id) } // Ensuring the ID is treated as an ObjectId
+              $match: { _id: mongoose.Types.ObjectId(id) }
           }
       ];
   
       if (includeReviews) {
           aggregationStages.push({
               $lookup: {
-                  from: "reviews", // Assuming 'reviews' is the name of the collection
-                  localField: "_id", // Field from the movies collection to match
-                  foreignField: "movieId", // Field from the reviews collection that corresponds to movie ID
-                  as: "movieReviews" // Array field to store the joined documents (reviews)
+                  from: "reviews",
+                  localField: "_id",
+                  foreignField: "movieId",
+                  as: "movieReviews"
               }
           });
       }
   
-      // Execute the aggregation
       Movie.aggregate(aggregationStages).exec((err, result) => {
           if (err) {
-              res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
-          } else {
-              if (result.length === 0) {
-                  res.status(404).json({ success: "False", message: "No movie found with the given ID" });
-              } else {
-                  res.json(result);
-              }
+              console.error("Aggregation error:", err);
+              return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
           }
+          if (result.length === 0) {
+              return res.status(404).json({ success: "False", message: "No movie found with the given ID" });
+          }
+          res.json(result);
       });
   });
 
-
+  
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
