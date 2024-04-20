@@ -258,7 +258,7 @@ router.route('/movies')
     });
 
 
-    router..get('/movies/:id', (req, res) => {
+    router.get('/movies/:id', (req, res) => {
         const movieId = req.params.id;
     
         Movie.findById(movieId)
