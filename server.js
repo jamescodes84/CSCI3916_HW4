@@ -14,7 +14,7 @@ var cors = require('cors');
 var User = require('./Users');
 var Movie = require('./Movies');
 var Review = require('./Reviews');
-
+let mongoose = require('mongoose');
 var app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -266,25 +266,27 @@ router.route('/movies')
             res.json({message: "aggregation does not work"})
             Movie.aggregate([
                 {
-                  $match: { _id: movieId } // replace orderId with the actual order id
+                    $match: {'_id': mongoose.Types.ObjectId(req.params.id)}
                 },
                 {
-                  $lookup: {
-                    from: "reviews", // name of the foreign collection
-                    localField: "movieId", // field in the orders collection
-                    foreignField: "_id", // field in the items collection
-                    as: "movieReviews" // output array where the joined items will be placed
-                  }
+                    $lookup:{
+                        from: 'reviews',
+                        localField: '_id',
+                        foreignField: 'movieId',
+                        as: 'reviews'
+                    }
+                }],function(err, doc) {
+                if(err){
+                    console.log("Error encountered.");
+                    res.send(err);
                 }
-              ]).exec(function(err, result) {
-                if (err) {
-                    console.error("Aggregation error:", err);
-                    return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
-             
-                } else {
-                    res.json(result);
+                else{
+                    console.log(doc[0]);
+                    res.json(doc[0]);
                 }
-              });
+            });
+})
+
 
              
 
