@@ -279,7 +279,7 @@ router.route('/movies')
         });
     }
 
-    // Check if a movie with the same title and release date already exists
+  /********************/
     Movie.findOne({ title: req.body.title, releaseDate: req.body.releaseDate }, (err, existingMovie) => {
       if (err) {
           return res.status(500).json({
@@ -295,6 +295,8 @@ router.route('/movies')
           });
       }
 
+    
+  /***************** */
 
     // If all fields are present, proceed to create the movie
     let newMovie = new Movie();
