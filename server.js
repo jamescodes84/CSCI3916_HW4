@@ -261,37 +261,46 @@ router.route('/movies')
     router.get('/movies/:id', (req, res) => {
         const movieId = req.params.id;
         const includeReviews = req.query.reviews === 'true';
-    
-        let aggregationStages = [
-            {
-                $match: { _id: mongoose.Types.ObjectId(movieId) } // Ensure ID is a valid ObjectId
-            }
-        ];
-    
+
         if (includeReviews) {
-            aggregationStages.push({
-                $lookup: {
-                    from: "reviews", // The reviews collection in the database
-                    localField: "_id", // Field from the movies collection
-                    foreignField: "movieId", // Field from the reviews collection that matches the movie ID
-                    as: "movieReviews" // Field where the joined documents (reviews) will be placed
+
+            Movie.aggregate([
+                {
+                  $match: { _id: movieId } // replace orderId with the actual order id
+                },
+                {
+                  $lookup: {
+                    from: "reviews", // name of the foreign collection
+                    localField: "movieId", // field in the orders collection
+                    foreignField: "_id", // field in the items collection
+                    as: "movieReviews" // output array where the joined items will be placed
+                  }
                 }
-            });
+              ]).exec(function(err, result) {
+                if (err) {
+                    console.error("Aggregation error:", err);
+                    return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
+             
+                } else {
+                  console.log(result);
+                }
+              });
+
+              res.json(result);
+
         }
-    
-        // Execute the aggregation
-        Movie.aggregate(aggregationStages).exec((err, result) => {
-            if (err) {
-                console.error("Aggregation error:", err);
-                return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
-            }
-            if (result.length === 0) {
-                return res.status(404).json({ success: "False", message: "No movie found with the given ID" });
-            }
-            res.json(result);
-        });
+
+        Movie.findById(movieId)
+            .then(movie => {
+                if (!movie) {
+                    return res.status(404).json({ message: "Movie not found" });
+                }
+                res.json(movie);
+            })
+            .catch(err => {
+                res.status(500).json({ message: "Error fetching movie", error: err });
+            });
     });
-    
 
   
 app.use('/', router);
