@@ -294,7 +294,7 @@ router.route('/movies')
               message: "A movie with the same title and release date already exists"
           });
       }
-
+    });
     
   /***************** */
 
