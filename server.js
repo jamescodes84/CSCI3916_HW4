@@ -120,23 +120,7 @@ router.get('/reviews/:id', function(req, res) {
       res.status(200).json(review);
     });
 });  
-/*
- THIS POST WORKS (no jwt auth)
-router.post('/reviews', function(req, res) {
-    const newReview = new Review({
-      title: req.body.title,
-      content: req.body.content,
-      rating: req.body.rating
-    });
-  
-    newReview.save(function(err, savedReview) {
-      if (err) {
-        return res.status(500).send({ message: "Failed to save review." });
-      }
-      res.status(201).send(savedReview);
-    });
-  });
-*/
+
 
 router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
     const newReview = new Review({
@@ -175,58 +159,7 @@ router.put((req, res)=> {
       res.status(200).json(review);
     });
 });
-/*
-router.route('reviews')
-.post(authJwtController.isAuthenticated, (req, res) =>{
-    const newReview = new Review({
-        title: req.body.title,
-        content: req.body.content,
-        rating: req.body.rating
-      });
-    
-      newReview.save(function(err, savedReview) {
-        if (err) {
-          return res.status(500).send({ message: "Failed to save review." });
-        }
-        res.status(201).send(savedReview);
-      });
-      res.status(201).send(savedReview);
-
-    var o = getJSONObjectForReviewRequirement(req);
-    o.status = 200;
-    o.message = 'Review created.'
-    res.json(o);
-});
-*/
-
-
-
-/*router.put('/reviews/', function(req, res) {
-    const reviewId = req.params.id;
-    const updateData = {
-      title: req.body.title,
-      content: req.body.content,
-      rating: req.body.rating
-     
-    };
-  
-    Review.findByIdAndUpdate(reviewId, updateData, { new: true }, function(err, review) {
-      if (err) {
-        return res.status(500).send({ message: "Error updating review." });
-      }
-      if (!review) {
-        return res.status(404).send({ message: "Review not found." });
-      }
-      res.status(200).json(review);
-    });
-  });*/
-  
- /* const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });*/
-
-
+/********** MOVIES *************/
 router.route('/movies')
     .get(authJwtController.isAuthenticated,(req, res) => {
         Movie.find(function(err, movies){
@@ -236,73 +169,7 @@ router.route('/movies')
             res.json(movies);
         })
         
-    })/*
-    .post(authJwtController.isAuthenticated,(req, res) => {
-      
-
-        // Implementation here
-        let newMovie = new Movie();
-        newMovie.title = req.body.title;
-        newMovie.releaseDate = req.body.releaseDate;
-        newMovie.genre= req.body.genre;
-        newMovie.actors = req.body.actors;
-        newMovie.save(function(err){
-            if (err) {
-                if (err.code == 11000) {
-                    return res.status(400).json({
-                        success: "False",
-                        message: "Title already exists"
-                    });
-                }
-                return res.status(500).send(err);
-            }
-            res.json({message:"Movie Created"});
-        });
     })
-    .post(authJwtController.isAuthenticated, (req, res) => {
-    // Required fields
-    const requiredFields = ['title', 'releaseDate', 'genre', 'actors'];
-    let missingFields = [];
-
-    // Check for missing fields
-    requiredFields.forEach(field => {
-        if (!req.body[field]) {
-            missingFields.push(field);
-        }
-    });
-
-    // If there are missing fields, return an error message
-    if (missingFields.length > 0) {
-        return res.status(400).json({
-            success: "False",
-            message: "Missing required information: " + missingFields.join(', ')
-        });
-    }
-
-  /*******************
-    
-  /***************** 
-
-    // If all fields are present, proceed to create the movie
-    let newMovie = new Movie();
-    newMovie.title = req.body.title;
-    newMovie.releaseDate = req.body.releaseDate;
-    newMovie.genre = req.body.genre;
-    newMovie.actors = req.body.actors;
-
-    newMovie.save(function(err) {
-        if (err) {
-            if (err.code == 11000) {
-                return res.status(400).json({
-                    success: "False",
-                    message: "Title already exists"
-                });
-            }
-            return res.status(500).send(err);
-        }
-        res.json({message: "Movie Created"});
-    });
-})*/
 
     .post(authJwtController.isAuthenticated, (req, res) => {
       // Required fields
@@ -357,9 +224,6 @@ router.route('/movies')
     })
 
 
-
-
-
     .put(authJwtController.isAuthenticated, (req, res) => {
         Movie.findOneAndUpdate(
             { title: req.body.title },
@@ -394,7 +258,40 @@ router.route('/movies')
     });
 
 
-   
+    router.get('/movies/:id', (req, res) => {
+      const { id } = req.params;
+      const includeReviews = req.query.reviews === 'true';
+  
+      let aggregationStages = [
+          {
+              $match: { _id: mongoose.Types.ObjectId(id) } // Ensuring the ID is treated as an ObjectId
+          }
+      ];
+  
+      if (includeReviews) {
+          aggregationStages.push({
+              $lookup: {
+                  from: "reviews", // Assuming 'reviews' is the name of the collection
+                  localField: "_id", // Field from the movies collection to match
+                  foreignField: "movieId", // Field from the reviews collection that corresponds to movie ID
+                  as: "movieReviews" // Array field to store the joined documents (reviews)
+              }
+          });
+      }
+  
+      // Execute the aggregation
+      Movie.aggregate(aggregationStages).exec((err, result) => {
+          if (err) {
+              res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
+          } else {
+              if (result.length === 0) {
+                  res.status(404).json({ success: "False", message: "No movie found with the given ID" });
+              } else {
+                  res.json(result);
+              }
+          }
+      });
+  });
 
 
 app.use('/', router);
@@ -446,4 +343,20 @@ router.get('/reviews:id', function(req,res){
             }
           });
     }
-});*/
+});*//*
+ THIS POST WORKS (no jwt auth)
+router.post('/reviews', function(req, res) {
+    const newReview = new Review({
+      title: req.body.title,
+      content: req.body.content,
+      rating: req.body.rating
+    });
+  
+    newReview.save(function(err, savedReview) {
+      if (err) {
+        return res.status(500).send({ message: "Failed to save review." });
+      }
+      res.status(201).send(savedReview);
+    });
+  });
+*/
