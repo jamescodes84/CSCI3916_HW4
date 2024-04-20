@@ -332,6 +332,45 @@ router.route('/movies')
         // Returns a message stating that the HTTP method is unsupported.
         res.status(405).send({ message: 'HTTP method not supported.' });
     });
+
+
+    router.get('/movies/:id', (req, res) => {
+      const movieId = req.params.id;
+      const includeReviews = req.query.reviews === 'true';
+  
+      if (includeReviews) {
+          // Perform an aggregation to fetch the movie along with its reviews
+          Movie.aggregate([
+              {
+                  $match: { _id: movieId } // Match the movie by ID
+              },
+              {
+                  $lookup: {
+                      from: "reviews", // The collection to join
+                      localField: "_id", // Field in the movies collection
+                      foreignField: "movieId", // Field in the reviews collection that corresponds to the movie ID
+                      as: "movieReviews" // The output array where the joined reviews will be placed
+                  }
+              }
+          ]).exec(function(err, result) {
+              if (err) {
+                  res.status(500).json({ error: 'An error occurred during the aggregation process', details: err });
+              } else {
+                  res.json(result); // Send the result with the movie and its reviews
+              }
+          });
+      } else {
+          // Fetch only the movie details without reviews if the query parameter is not set
+          Movie.findById(movieId).then(movie => {
+              res.json(movie);
+          }).catch(error => {
+              res.status(500).json({ error: 'Failed to fetch movie', details: error });
+          });
+      }
+  });
+  
+
+
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
