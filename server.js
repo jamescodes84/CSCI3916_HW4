@@ -238,6 +238,19 @@ router.route('/movies')
         
     })
     .post(authJwtController.isAuthenticated,(req, res) => {
+      if (!req.body.title){
+        res.json({message:"Failed to create movie. Missing title"})
+      }
+      if (!req.body.releaseDate){
+        res.json({message:"Failed to create movie. Missing release date."})
+
+      if (!req.body.genre){
+        res.json({message:"Failed to create movie. Missing genre."})
+
+      if (!req.body.actors){
+        res.json({message:"Failed to create movie. Missing actors."})
+
+
         // Implementation here
         let newMovie = new Movie();
         newMovie.title = req.body.title;
