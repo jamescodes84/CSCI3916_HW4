@@ -269,24 +269,22 @@ router.route('/movies')
                     $match: {'_id': mongoose.Types.ObjectId(req.params.id)}
                 },
                 {
-                    $lookup:{
-                        from: 'reviews',
-                        localField: '_id',
-                        foreignField: 'movieId',
-                        as: 'reviews'
-                    }
-                }],function(err, doc) {
-                if(err){
-                    console.log("Error encountered.");
-                    res.send(err);
+                  $lookup: {
+                    from: 'reviews',
+                    localField: '_id',
+                    foreignField: 'movieId',
+                    as: 'reviews'
+                  }
                 }
-                else{
-                    console.log(doc[0]);
-                    res.json(doc[0]);
+              ]).exec(function(err, result) {
+                if (err) {
+                    console.error("Aggregation error:", err);
+                    return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
+             
+                } else {
+                    res.json(result);
                 }
-            });
-})
-
+              });
 
              
 
