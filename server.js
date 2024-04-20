@@ -275,8 +275,7 @@ router.route('/movies')
           aggregationStages.push({
               $lookup: {
                   from: "reviews",
-                  localField: "_id",
-                  foreignField: "movieId",
+                  movieId: req.body.movieId,
                   as: "movieReviews"
               }
           });
