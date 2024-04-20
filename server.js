@@ -236,20 +236,9 @@ router.route('/movies')
             res.json(movies);
         })
         
-    })
+    })/*
     .post(authJwtController.isAuthenticated,(req, res) => {
-      if (!req.body.title){
-        res.json({message:"Failed to create movie. Missing title"});
-      }
-      if (!req.body.releaseDate){
-        res.json({message:"Failed to create movie. Missing release date."});
-      }
-      if (!req.body.genre){
-        res.json({message:"Failed to create movie. Missing genre."});
-      }
-      if (!req.body.actors){
-        res.json({message:"Failed to create movie. Missing actors."});
-      }
+      
 
         // Implementation here
         let newMovie = new Movie();
@@ -269,7 +258,48 @@ router.route('/movies')
             }
             res.json({message:"Movie Created"});
         });
-    })
+    })*/
+    .post(authJwtController.isAuthenticated, (req, res) => {
+    // Required fields
+    const requiredFields = ['title', 'releaseDate', 'genre', 'actors'];
+    let missingFields = [];
+
+    // Check for missing fields
+    requiredFields.forEach(field => {
+        if (!req.body[field]) {
+            missingFields.push(field);
+        }
+    });
+
+    // If there are missing fields, return an error message
+    if (missingFields.length > 0) {
+        return res.status(400).json({
+            success: "False",
+            message: "Missing required information: " + missingFields.join(', ')
+        });
+    }
+
+    // If all fields are present, proceed to create the movie
+    let newMovie = new Movie();
+    newMovie.title = req.body.title;
+    newMovie.releaseDate = req.body.releaseDate;
+    newMovie.genre = req.body.genre;
+    newMovie.actors = req.body.actors;
+
+    newMovie.save(function(err) {
+        if (err) {
+            if (err.code == 11000) {
+                return res.status(400).json({
+                    success: "False",
+                    message: "Title already exists"
+                });
+            }
+            return res.status(500).send(err);
+        }
+        res.json({message: "Movie Created"});
+    });
+});
+
     .put(authJwtController.isAuthenticated, (req, res) => {
         Movie.findOneAndUpdate(
             { title: req.body.title },
