@@ -246,10 +246,10 @@ router.route('/movies')
 
       if (!req.body.genre){
         res.json({message:"Failed to create movie. Missing genre."})
-
+      }
       if (!req.body.actors){
         res.json({message:"Failed to create movie. Missing actors."})
-
+      }
 
         // Implementation here
         let newMovie = new Movie();
