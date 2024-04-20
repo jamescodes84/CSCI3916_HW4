@@ -243,7 +243,7 @@ router.route('/movies')
       }
       if (!req.body.releaseDate){
         res.json({message:"Failed to create movie. Missing release date."})
-
+      }
       if (!req.body.genre){
         res.json({message:"Failed to create movie. Missing genre."})
       }
