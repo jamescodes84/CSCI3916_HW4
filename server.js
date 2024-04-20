@@ -282,11 +282,11 @@ router.route('/movies')
                     return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
              
                 } else {
-                  console.log(result);
+                    res.json(result);
                 }
               });
 
-              res.json(result);
+             
 
         }
 
