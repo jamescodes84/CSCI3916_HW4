@@ -298,7 +298,7 @@ router.route('/movies')
         }
         res.json({message: "Movie Created"});
     });
-});
+})
 
     .put(authJwtController.isAuthenticated, (req, res) => {
         Movie.findOneAndUpdate(
