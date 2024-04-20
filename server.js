@@ -263,7 +263,7 @@ router.route('/movies')
         const includeReviews = req.query.review === 'true';
 
         if (includeReviews) {
-            res.status(500).json({ message: "Error fetching movie", error: err });
+            res.status(500).json({ message: "Error fetching movie"});
            /* Movie.aggregate([
                 {
                   $match: { _id: movieId } // replace orderId with the actual order id
