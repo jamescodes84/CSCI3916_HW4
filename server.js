@@ -257,13 +257,13 @@ router.route('/movies')
         res.status(405).send({ message: 'HTTP method not supported.' });
     });
 
-/*
+
     router.get('/movies/:id', (req, res) => {
         const movieId = req.params.id;
         const includeReviews = req.query.review === 'true';
 
         if (includeReviews) {
-            
+            res.json({message: "aggregation does not work"})
             Movie.aggregate([
                 {
                   $match: { _id: movieId } // replace orderId with the actual order id
@@ -301,54 +301,10 @@ router.route('/movies')
                 res.status(500).json({ message: "Error fetching movie", error: err });
             });
     });
-*/
+
   
 
-router.get('/movies/:id', (req, res) => {
-    const movieId = req.params.id;
-    const includeReviews = req.query.reviews === 'true'; // Fixed the query parameter check
 
-    if (!mongoose.Types.ObjectId.isValid(movieId)) {
-        return res.status(400).json({ success: "False", message: "Invalid ID format" });
-    }
-
-    if (includeReviews) {
-        Movie.aggregate([
-            {
-                $match: { _id: mongoose.Types.ObjectId(movieId) } // Ensuring the ID is treated as an ObjectId
-            },
-            {
-                $lookup: {
-                    from: "reviews", // Assuming 'reviews' is the name of the collection
-                    localField: "_id", // Local field in the Movie collection
-                    foreignField: "movieId", // Field in the reviews collection that needs to match Movie's _id
-                    as: "movieReviews" // Output array to store the joined documents
-                }
-            }
-        ]).exec((err, result) => {
-            if (err) {
-                console.error("Aggregation error:", err);
-                return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
-            }
-            if (result.length === 0) {
-                return res.status(404).json({ success: "False", message: "No movie found with the given ID" });
-            }
-            res.json(result[0]); // Assuming aggregation results are returned as an array
-        });
-    } else {
-        Movie.findById(movieId)
-            .then(movie => {
-                if (!movie) {
-                    return res.status(404).json({ message: "Movie not found" });
-                }
-                res.json(movie);
-            })
-            .catch(err => {
-                console.error("Error fetching movie:", err);
-                res.status(500).json({ message: "Error fetching movie", error: err });
-            });
-    }
-});
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
