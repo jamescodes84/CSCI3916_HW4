@@ -271,10 +271,10 @@ router.route('/movies')
         if (includeReviews) {
             aggregationStages.push({
                 $lookup: {
-                    from: "Review",
-                    localField: req.body.movieId,
-                    foreignField:"movieId",
-                    as:"movieReviews"
+                    from: "reviews", // The reviews collection in the database
+                    localField: "_id", // Field from the movies collection
+                    foreignField: "movieId", // Field from the reviews collection that matches the movie ID
+                    as: "movieReviews" // Field where the joined documents (reviews) will be placed
                 }
             });
         }
@@ -291,6 +291,7 @@ router.route('/movies')
             res.json(result);
         });
     });
+    
 
   
 app.use('/', router);
