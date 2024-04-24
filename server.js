@@ -82,7 +82,7 @@ router.post('/signup', function(req, res) {
     }
 });
 
-router.post('/signin', function (req, res) {
+router.post('/signin', authJwtController.isAuthenticated, (req, res)=>  {
     var userNew = new User();
     userNew.username = req.body.username;
     userNew.password = req.body.password;
@@ -105,97 +105,7 @@ router.post('/signin', function (req, res) {
     })
 });
 
-/**************** REVIEWS *************************** */
 
-router.get('/reviews/:id', function(req, res) {
-    const reviewId = req.params.id;
-  
-    Review.findById(reviewId, function(err, review) {
-      if (err) {
-        return res.status(500).send({ message: "Error retrieving review." });
-      }
-      if (!review) {
-        return res.status(404).send({ message: "Review not found." });
-      }
-      res.status(200).json(review);
-    });
-});  
-
-/*
-router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
-    const newReview = new Review({
-        username: req.body.username,
-        movieId: req.body.movieId,
-        review: req.body.review,
-        rating: req.body.rating
-      });
-    
-      newReview.save(function(err, savedReview) {
-        if (err) {
-          return res.status(500).send({ message: "Failed to save review." });
-        }
-        res.status(201).send({message: "Review created!"});
-      });
-    
-  });
-*/
-
-router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
-    // Define the required fields for a review
-    const requiredFields = ['username', 'movieId', 'review', 'rating'];
-    let missingFields = [];
-
-    // Check for missing fields
-    requiredFields.forEach(field => {
-        if (req.body[field] === undefined) { // Check explicitly for undefined to allow falsy values like 0 or ''
-            missingFields.push(field);
-        }
-    });
-
-    // Return an error if there are missing fields
-    if (missingFields.length > 0) {
-        return res.status(400).json({
-            success: "False",
-            message: "Missing required review information: " + missingFields.join(', ')
-        });
-    }
-
-    // If all fields are present, proceed to create the review
-    const newReview = new Review({
-        username: req.body.username,
-        movieId: req.body.movieId,
-        review: req.body.review,
-        rating: req.body.rating
-    });
-  
-    newReview.save(function(err, savedReview) {
-        if (err) {
-            console.error("Error saving review:", err);
-            return res.status(500).send({ success: "False", message: "Failed to save review.", error: err });
-        }
-        res.status(201).send({ success: "True", message: "Review created!", reviewId: savedReview._id });
-    });
-});
-
-router.put((req, res)=> {
-    const reviewId = req.params.id;
-    const updateData = {
-      title: req.body.title,
-      content: req.body.content,
-      rating: req.body.rating
-     
-    };
-  
-    Review.findByIdAndUpdate(reviewId, updateData, { new: true }, function(err, review) {
-      if (err) {
-        return res.status(500).send({ message: "Error updating review." });
-      }
-      if (!review) {
-        return res.status(404).send({ message: "Review not found." });
-      }
-      res.status(200).json(review);
-    });
-});
 /********** MOVIES *************/
 router.route('/movies')
     .get(authJwtController.isAuthenticated,(req, res) => {
@@ -349,7 +259,97 @@ module.exports = app; // for testing only
 
 
 
+/**************** REVIEWS *************************** */
 
+router.get('/reviews/:id', authJwtController.isAuthenticated, (req, res)=> {
+    const reviewId = req.params.id;
+  
+    Review.findById(reviewId, function(err, review) {
+      if (err) {
+        return res.status(500).send({ message: "Error retrieving review." });
+      }
+      if (!review) {
+        return res.status(404).send({ message: "Review not found." });
+      }
+      res.status(200).json(review);
+    });
+});  
+
+/*
+router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
+    const newReview = new Review({
+        username: req.body.username,
+        movieId: req.body.movieId,
+        review: req.body.review,
+        rating: req.body.rating
+      });
+    
+      newReview.save(function(err, savedReview) {
+        if (err) {
+          return res.status(500).send({ message: "Failed to save review." });
+        }
+        res.status(201).send({message: "Review created!"});
+      });
+    
+  });
+*/
+
+router.post('/reviews', authJwtController.isAuthenticated, (req, res) => {
+    // Define the required fields for a review
+    const requiredFields = ['username', 'movieId', 'review', 'rating'];
+    let missingFields = [];
+
+    // Check for missing fields
+    requiredFields.forEach(field => {
+        if (req.body[field] === undefined) { // Check explicitly for undefined to allow falsy values like 0 or ''
+            missingFields.push(field);
+        }
+    });
+
+    // Return an error if there are missing fields
+    if (missingFields.length > 0) {
+        return res.status(400).json({
+            success: "False",
+            message: "Missing required review information: " + missingFields.join(', ')
+        });
+    }
+
+    // If all fields are present, proceed to create the review
+    const newReview = new Review({
+        username: req.body.username,
+        movieId: req.body.movieId,
+        review: req.body.review,
+        rating: req.body.rating
+    });
+  
+    newReview.save(function(err, savedReview) {
+        if (err) {
+            console.error("Error saving review:", err);
+            return res.status(500).send({ success: "False", message: "Failed to save review.", error: err });
+        }
+        res.status(201).send({ success: "True", message: "Review created!", reviewId: savedReview._id });
+    });
+});
+
+/*router.put((req, res)=> {
+    const reviewId = req.params.id;
+    const updateData = {
+      title: req.body.title,
+      content: req.body.content,
+      rating: req.body.rating
+     
+    };
+  
+    Review.findByIdAndUpdate(reviewId, updateData, { new: true }, function(err, review) {
+      if (err) {
+        return res.status(500).send({ message: "Error updating review." });
+      }
+      if (!review) {
+        return res.status(404).send({ message: "Review not found." });
+      }
+      res.status(200).json(review);
+    });
+});*/
 
 
 
