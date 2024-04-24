@@ -1,5 +1,5 @@
 /*
-CSC3916 HW4
+CSC3916 HW5 (Even though the name of the git project is HW4 this is actually HW5)
 File: Server.js
 Description: Web API scaffolding for Movie API
  */
