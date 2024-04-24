@@ -16,13 +16,14 @@ var Movie = require('./Movies');
 var Review = require('./Reviews');
 let mongoose = require('mongoose');
 var app = express();
+var router = express.Router();
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
 app.use(passport.initialize());
 
-var router = express.Router();
+
 
 function getJSONObjectForMovieRequirement(req) {
     var json = {
@@ -59,7 +60,8 @@ function getJSONObjectForReviewRequirement(req) {
 
     return json;
 }
-var final = 0;
+
+/****************** Signup / Signin  ****************/
 router.post('/signup', function(req, res) {
     if (!req.body.username || !req.body.password) {
         res.json({success: false, msg: 'Please include both username and password to signup.'})
@@ -104,7 +106,6 @@ router.post('/signin', authJwtController.isAuthenticated, (req, res)=>  {
         })
     })
 });
-
 
 /********** MOVIES *************/
 router.route('/movies')
@@ -170,7 +171,6 @@ router.route('/movies')
       });
     })
 
-
     .put(authJwtController.isAuthenticated, (req, res) => {
         Movie.findOneAndUpdate(
             { title: req.body.title },
@@ -204,7 +204,6 @@ router.route('/movies')
         res.status(405).send({ message: 'HTTP method not supported.' });
     });
 
-
     router.get('/movies/:id', (req, res) => {
         const movieId = req.params.id;
         const includeReviews = req.query.review === 'true';
@@ -233,8 +232,6 @@ router.route('/movies')
                 }
               });
 
-
-
         }
 
         Movie.findById(movieId)
@@ -249,15 +246,9 @@ router.route('/movies')
             });
     });
 
-  
-
-
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
-
-
-
 
 /**************** REVIEWS *************************** */
 
