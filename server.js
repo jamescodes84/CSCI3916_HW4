@@ -84,7 +84,7 @@ router.post('/signup', function(req, res) {
     }
 });
 
-router.post('/signin', authJwtController.isAuthenticated, (req, res)=>  {
+router.post('/signin', function(req, res) {
     var userNew = new User();
     userNew.username = req.body.username;
     userNew.password = req.body.password;
