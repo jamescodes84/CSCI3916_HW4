@@ -205,7 +205,8 @@ router.route('/movies')
         res.status(405).send({ message: 'HTTP method not supported.' });
     });
 
-    router.get('/movies/:id', (req, res) => {
+    router.route('/movies/:id')
+    .get(authJwtController, (req, res) => {
         const movieId = req.params.id;
         const includeReviews = req.query.review === 'true';
 
@@ -234,20 +235,20 @@ router.route('/movies')
               });
 
         }
-
-        router.route('/movies/:id', (req, res) => {
-            Movie.findOneAndUpdate(
-                { movieId: req.body.movieId },
-                req.body,
-                { new: true, upsert: true },
-                function(err, movie) {
-                    if (err) {
-                        return res.status(500).send(err);
-                    }
-                    res.json({ message: "Movie Updated", movie: movie });
+    })
+    .put(authJwtController, (req, res) => {
+        Movie.findOneAndUpdate(
+            { movieId: req.body.movieId },
+            req.body,
+            { new: true, upsert: true },
+            function(err, movie) {
+                if (err) {
+                    return res.status(500).send(err);
                 }
-            );
-        })
+                res.json({ message: "Movie Updated", movie: movie });
+            }
+        );
+    })
 
         Movie.findById(movieId)
             .then(movie => {
@@ -259,7 +260,7 @@ router.route('/movies')
             .catch(err => {
                 res.status(500).json({ message: "Error fetching movie", error: err });
             });
-    });
+    
 
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
