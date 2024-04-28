@@ -140,16 +140,6 @@ router.route('/movies')
             }
         });
     } else {
-        Movie.find()
-            .then(movies => {
-                res.json(movies);
-            })
-            .catch(err => {
-                res.status(500).json({ message: "Error fetching movies", error: err });
-            });
-    }
-
-
         Movie.find(function(err, movies){
             if (err) {
                 res.status(500).send(err);
@@ -157,6 +147,10 @@ router.route('/movies')
             res.json(movies);
         })
         
+    }
+
+
+       
     })
 
     .post(authJwtController.isAuthenticated, (req, res) => {
