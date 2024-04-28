@@ -251,45 +251,45 @@ router.route('/movies')
     })*/
 
     .get(authJwtController.isAuthenticated, (req, res) => {
-        const includeReviews = req.query.review === 'true';
-    
-        if (includeReviews) {
-            Movie.aggregate([
-                {
-                    $lookup: {
-                        from: 'reviews',
-                        localField: '_id',
-                        foreignField: 'movieId',
-                        as: 'reviews'
-                    }
-                },
-                {
-                    $addFields: {
-                        reviews: { $reviews: "$reviews" }
-                    }
-                },
-                {
-                    $sort: { averageRating: -1 } // Sort by the average rating in descending order
+    const includeReviews = req.query.review === 'true';
+
+    if (includeReviews) {
+        Movie.aggregate([
+            {
+                $lookup: {
+                    from: 'reviews',
+                    localField: '_id',
+                    foreignField: 'movieId',
+                    as: 'reviews'
                 }
-            ]).exec(function(err, movies) {
-                if (err) {
-                    console.error("Aggregation error:", err);
-                    return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
-                } else {
-                    res.json(movies);
+            },
+            {
+                $addFields: {
+                    averageRating: { $avg: "$reviews.rating" }
                 }
+            },
+            {
+                $sort: { averageRating: -1 } // Sort by the average rating in descending order
+            }
+        ]).exec(function(err, movies) {
+            if (err) {
+                console.error("Aggregation error:", err);
+                return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
+            } else {
+                res.json(movies);
+            }
+        });
+    } else {
+        Movie.find()
+            .then(movies => {
+                res.json(movies);
+            })
+            .catch(err => {
+                res.status(500).json({ message: "Error fetching movies", error: err });
             });
-        } else {
-            Movie.find()
-                .then(movies => {
-                    res.json(movies);
-                })
-                .catch(err => {
-                    res.status(500).json({ message: "Error fetching movies", error: err });
-                });
-        }
-    })
-    
+    }
+})
+
 
     .put(authJwtController.isAuthenticated, (req, res) => {
         // Using req.params.id to get the movie ID from the URL parameter
