@@ -206,7 +206,7 @@ router.route('/movies')
 
 
     router.route('/movies/:id')
-    .get('/movies/:id', authJwtController, (req, res) => {
+    .get( authJwtController, (req, res) => {
         const movieId = req.params.id;
         const includeReviews = req.query.review === 'true';
 
