@@ -248,10 +248,7 @@ router.route('/movies')
             });
     })
 
-
-
-
-    .put(authJwtController, (req, res) => {
+    .put(authJwtController.isAuthenticated, (req, res) => {
         Movie.findOneAndUpdate(
             { movieId: req.body.movieId },
             req.body,
