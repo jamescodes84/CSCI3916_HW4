@@ -205,80 +205,62 @@ router.route('/movies')
         res.status(405).send({ message: 'HTTP method not supported.' });
     });
 
-    
-    router.route('/movies/:id')
-    .get(authJwtController, (req, res) => {
+    router.get('/movies/:id', (req, res) => {
         const movieId = req.params.id;
         const includeReviews = req.query.review === 'true';
 
         if (includeReviews) {
-            // Aggregation to fetch movies with reviews
+           
             Movie.aggregate([
                 {
-                    $match: {'_id': mongoose.Types.ObjectId(movieId)}
+                    $match: {'_id': mongoose.Types.ObjectId(req.params.id)}
                 },
                 {
-                    $lookup: {
-                        from: 'reviews',
-                        localField: '_id',
-                        foreignField: 'movieId',
-                        as: 'reviews'
-                    }
+                  $lookup: {
+                    from: 'reviews',
+                    localField: '_id',
+                    foreignField: 'movieId',
+                    as: 'reviews'
+                  }
                 }
-            ]).exec(function(err, result) {
+              ]).exec(function(err, result) {
                 if (err) {
                     console.error("Aggregation error:", err);
                     return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
+             
                 } else {
                     res.json(result);
                 }
+              });
 
-            })    
-        
-        } else {
-            // Fetching movie without reviews
-            Movie.findById(movieId)
-                .then(movie => {
-                    if (!movie) {
-                        return res.status(404).json({ message: "Movie not found" });
-                    }
-                    res.json(movie);
-                })
-                .catch(err => {
-                    res.status(500).json({ message: "Error fetching movie", error: err });
-                })
         }
-    })
-   
-   
-    /*.put(authJwtController, (req, res) => {
-        // Update the movie
-        Movie.findOneAndUpdate(
-            { _id: req.params.id },
-            req.body,
-            { new: true, upsert: true },
-            function(err, movie) {
-                if (err) {
-                    return res.status(500).send(err);
+
+        router.route('/movies/:id', (req, res) => {
+            Movie.findOneAndUpdate(
+                { movieId: req.body.movieId },
+                req.body,
+                { new: true, upsert: true },
+                function(err, movie) {
+                    if (err) {
+                        return res.status(500).send(err);
+                    }
+                    res.json({ message: "Movie Updated", movie: movie });
                 }
-                res.json({ message: "Movie Updated", movie: movie });
-            }
-        );
+            );
+        })
+
+        Movie.findById(movieId)
+            .then(movie => {
+                if (!movie) {
+                    return res.status(404).json({ message: "Movie not found" });
+                }
+                res.json(movie);
+            })
+            .catch(err => {
+                res.status(500).json({ message: "Error fetching movie", error: err });
+            });
     });
 
-
-    Movie.findById(movieId)
-        .then(movie => {
-            if (!movie) {
-                return res.status(404).json({ message: "Movie not found" });
-            }
-            res.json(movie);
-        })
-        .catch(err => {
-            res.status(500).json({ message: "Error fetching movie", error: err });
-        });
- */
-        
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
