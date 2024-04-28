@@ -251,14 +251,10 @@ router.route('/movies')
     })*/
 
     .get(authJwtController.isAuthenticated, (req, res) => {
-        const movieId = req.params.id;
         const includeReviews = req.query.review === 'true';
     
         if (includeReviews) {
             Movie.aggregate([
-                {
-                    $match: {'_id': mongoose.Types.ObjectId(movieId)}
-                },
                 {
                     $lookup: {
                         from: 'reviews',
@@ -268,42 +264,28 @@ router.route('/movies')
                     }
                 },
                 {
-                    $unwind: {
-                        path: '$reviews',
-                        preserveNullAndEmptyArrays: true // Preserves movies without reviews
+                    $addFields: {
+                        averageRating: { $avg: "$reviews.rating" }
                     }
                 },
                 {
-                    $group: {
-                        _id: '$_id',
-                        title: { $first: '$title' }, // Preserving other fields if necessary
-                        reviews: { $push: '$reviews' },
-                        averageRating: { $avg: '$reviews.rating' }
-                    }
-                },
-                {
-                    $sort: { averageRating: -1 } // Sort by averageRating descending
+                    $sort: { averageRating: -1 } // Sort by the average rating in descending order
                 }
-            ]).exec(function(err, result) {
+            ]).exec(function(err, movies) {
                 if (err) {
                     console.error("Aggregation error:", err);
                     return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
-             
                 } else {
-                    res.json(result);
+                    res.json(movies);
                 }
             });
-    
         } else {
-            Movie.findById(movieId)
-                .then(movie => {
-                    if (!movie) {
-                        return res.status(404).json({ message: "Movie not found" });
-                    }
-                    res.json(movie);
+            Movie.find()
+                .then(movies => {
+                    res.json(movies);
                 })
                 .catch(err => {
-                    res.status(500).json({ message: "Error fetching movie", error: err });
+                    res.status(500).json({ message: "Error fetching movies", error: err });
                 });
         }
     })
