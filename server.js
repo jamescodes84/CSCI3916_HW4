@@ -265,7 +265,7 @@ router.route('/movies')
             }
         );
     });
-*/
+
 
     Movie.findById(movieId)
         .then(movie => {
@@ -277,7 +277,7 @@ router.route('/movies')
         .catch(err => {
             res.status(500).json({ message: "Error fetching movie", error: err });
         });
- 
+ */
         
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
