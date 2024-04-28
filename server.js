@@ -110,6 +110,46 @@ router.post('/signin', function(req, res) {
 /********** MOVIES *************/
 router.route('/movies')
     .get(authJwtController.isAuthenticated,(req, res) => {
+
+        const includeReviews = req.query.review === 'true';
+
+    if (includeReviews) {
+        Movie.aggregate([
+            {
+                $lookup: {
+                    from: 'reviews',
+                    localField: '_id',
+                    foreignField: 'movieId',
+                    as: 'reviews'
+                }
+            },
+            {
+                $addFields: {
+                    averageRating: { $avg: "$reviews.rating" }
+                }
+            },
+            {
+                $sort: { averageRating: -1 } // Sort by the average rating in descending order
+            }
+        ]).exec(function(err, movies) {
+            if (err) {
+                console.error("Aggregation error:", err);
+                return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
+            } else {
+                res.json(movies);
+            }
+        });
+    } else {
+        Movie.find()
+            .then(movies => {
+                res.json(movies);
+            })
+            .catch(err => {
+                res.status(500).json({ message: "Error fetching movies", error: err });
+            });
+    }
+
+
         Movie.find(function(err, movies){
             if (err) {
                 res.status(500).send(err);
@@ -206,46 +246,7 @@ router.route('/movies')
         res.status(405).send({ message: 'HTTP method not supported.' });
     });
 
-    router.route('/movies?reviews=true')
-    .get(authJwtController.isAuthenticated, (req,res)=>{
-        const includeReviews = req.query.review === 'true';
-
-    if (includeReviews) {
-        Movie.aggregate([
-            {
-                $lookup: {
-                    from: 'reviews',
-                    localField: '_id',
-                    foreignField: 'movieId',
-                    as: 'reviews'
-                }
-            },
-            {
-                $addFields: {
-                    averageRating: { $avg: "$reviews.rating" }
-                }
-            },
-            {
-                $sort: { averageRating: -1 } // Sort by the average rating in descending order
-            }
-        ]).exec(function(err, movies) {
-            if (err) {
-                console.error("Aggregation error:", err);
-                return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
-            } else {
-                res.json(movies);
-            }
-        });
-    } else {
-        Movie.find()
-            .then(movies => {
-                res.json(movies);
-            })
-            .catch(err => {
-                res.status(500).json({ message: "Error fetching movies", error: err });
-            });
-    }
-    })
+    
 
     router.route('/movies/:id')
    /* .get(  authJwtController.isAuthenticated, (req, res) => {
