@@ -261,7 +261,7 @@ router.route('/movies')
 
     .get(authJwtController.isAuthenticated, (req, res) => {
 
-    const includeReviews = req.query.review;
+    const includeReviews = req.query.reviews;
 
     if (includeReviews) {
         Movie.aggregate([
