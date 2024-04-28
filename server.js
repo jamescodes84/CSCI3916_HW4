@@ -295,41 +295,6 @@ router.route('/movies')
             });
     const includeReviews = req.query.reviews;
 
-    if (includeReviews) {
-        Movie.aggregate([
-            {
-                $lookup: {
-                    from: 'reviews',
-                    localField: '_id',
-                    foreignField: 'movieId',
-                    as: 'reviews'
-                }
-            },
-            {
-                $addFields: {
-                    averageRating: { $avg: "$reviews.rating" }
-                }
-            },
-            {
-                $sort: { averageRating: -1 } // Sort by the average rating in descending order
-            }
-        ]).exec(function(err, movies) {
-            if (err) {
-                console.error("Aggregation error:", err);
-                return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
-            } else {
-                res.json(movies);
-            }
-        });
-    } else {
-        Movie.find()
-            .then(movies => {
-                res.json(movies);
-            })
-            .catch(err => {
-                res.status(500).json({ message: "Error fetching movies", error: err });
-            });
-    }
 })
 
 
