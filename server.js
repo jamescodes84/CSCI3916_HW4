@@ -246,8 +246,24 @@ router.route('/movies')
             .catch(err => {
                 res.status(500).json({ message: "Error fetching movie", error: err });
             });
-    });
+    })
 
+
+
+
+    .put(authJwtController, (req, res) => {
+        Movie.findOneAndUpdate(
+            { movieId: req.body.movieId },
+            req.body,
+            { new: true, upsert: true },
+            function(err, movie) {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+                res.json({ message: "Movie Updated", movie: movie });
+            }
+        );
+    });
 /*
     router.put('/movies/:id', (req,res)=>{
 
