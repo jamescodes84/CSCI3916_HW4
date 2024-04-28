@@ -121,7 +121,7 @@ router.route('/movies')
 
     .post(authJwtController.isAuthenticated, (req, res) => {
       // Required fields
-      const requiredFields = ['title', 'releaseDate', 'genre', 'actors'];
+      const requiredFields = ['title', 'releaseDate', 'genre', 'actors', 'imageUrl'];
       let missingFields = [];
 
       // Check for missing fields
@@ -161,6 +161,7 @@ router.route('/movies')
           newMovie.releaseDate = req.body.releaseDate;
           newMovie.genre = req.body.genre;
           newMovie.actors = req.body.actors;
+          newMovie.imageUrl = req.body.imageUrl;
 
           newMovie.save(function(err) {
               if (err) {
@@ -233,6 +234,20 @@ router.route('/movies')
               });
 
         }
+
+        router.route('/movies/:id', (req, res) => {
+            Movie.findOneAndUpdate(
+                { movieId: req.body.movieId },
+                req.body,
+                { new: true, upsert: true },
+                function(err, movie) {
+                    if (err) {
+                        return res.status(500).send(err);
+                    }
+                    res.json({ message: "Movie Updated", movie: movie });
+                }
+            );
+        })
 
         Movie.findById(movieId)
             .then(movie => {
