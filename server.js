@@ -231,7 +231,9 @@ router.route('/movies')
                 } else {
                     res.json(result);
                 }
-            });
+
+            })    
+        
         } else {
             // Fetching movie without reviews
             Movie.findById(movieId)
@@ -243,9 +245,10 @@ router.route('/movies')
                 })
                 .catch(err => {
                     res.status(500).json({ message: "Error fetching movie", error: err });
-                });
-        }
-    })
+                })
+        })
+   
+    /********* */
     .put(authJwtController, (req, res) => {
         // Update the movie
         Movie.findOneAndUpdate(
