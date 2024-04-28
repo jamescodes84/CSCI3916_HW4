@@ -265,7 +265,7 @@ router.route('/movies')
                 },
                 {
                     $addFields: {
-                        averageRating: { $avg: "$reviews.rating" }
+                        reviews: { $reviews: "$reviews" }
                     }
                 },
                 {
