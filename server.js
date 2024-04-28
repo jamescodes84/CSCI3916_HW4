@@ -246,10 +246,11 @@ router.route('/movies')
                 .catch(err => {
                     res.status(500).json({ message: "Error fetching movie", error: err });
                 })
-        })
+        }
+    })
    
     /********* */
-    .put(authJwtController, (req, res) => {
+    /*.put(authJwtController, (req, res) => {
         // Update the movie
         Movie.findOneAndUpdate(
             { _id: req.params.id },
@@ -263,7 +264,7 @@ router.route('/movies')
             }
         );
     });
-
+*/
 
     Movie.findById(movieId)
         .then(movie => {
@@ -275,7 +276,7 @@ router.route('/movies')
         .catch(err => {
             res.status(500).json({ message: "Error fetching movie", error: err });
         });
-    
+ 
         
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
