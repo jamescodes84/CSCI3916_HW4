@@ -121,7 +121,7 @@ router.route('/movies')
 
     .post(authJwtController.isAuthenticated, (req, res) => {
       // Required fields
-      const requiredFields = ['title', 'releaseDate', 'genre', 'actors', 'imageUrl'];
+      const requiredFields = ['title', 'releaseDate', 'genre', 'actors'];
       let missingFields = [];
 
       // Check for missing fields
@@ -161,7 +161,6 @@ router.route('/movies')
           newMovie.releaseDate = req.body.releaseDate;
           newMovie.genre = req.body.genre;
           newMovie.actors = req.body.actors;
-          newMovie.imageUrl = req.body.imageUrl;
 
           newMovie.save(function(err) {
               if (err) {
@@ -205,7 +204,8 @@ router.route('/movies')
         res.status(405).send({ message: 'HTTP method not supported.' });
     });
 
-    router.get('/movies/:id', (req, res) => {
+    router.route('/movies/:id')
+    .get(authJwtController, (req, res) => {
         const movieId = req.params.id;
         const includeReviews = req.query.review === 'true';
 
@@ -235,20 +235,6 @@ router.route('/movies')
 
         }
 
-        router.put(authJwtController, (req, res) => {
-            Movie.findOneAndUpdate(
-                { movieId: req.body.movieId },
-                req.body,
-                { new: true, upsert: true },
-                function(err, movie) {
-                    if (err) {
-                        return res.status(500).send(err);
-                    }
-                    res.json({ message: "Movie Updated", movie: movie });
-                }
-            );
-        })
-
         Movie.findById(movieId)
             .then(movie => {
                 if (!movie) {
@@ -259,6 +245,23 @@ router.route('/movies')
             .catch(err => {
                 res.status(500).json({ message: "Error fetching movie", error: err });
             });
+    })
+
+
+    /********* */
+    .put(authJwtController, (req, res) => {
+        // Update the movie
+        Movie.findOneAndUpdate(
+            { _id: req.params.id },
+            req.body,
+            { new: true, upsert: true },
+            function(err, movie) {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+                res.json({ message: "Movie Updated", movie: movie });
+            }
+        );
     });
 
 app.use('/', router);
