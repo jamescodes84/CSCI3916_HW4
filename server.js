@@ -208,7 +208,7 @@ router.route('/movies')
 
 
     router.route('/movies/:id')
-    .get(  authJwtController.isAuthenticated, (req, res) => {
+   /* .get(  authJwtController.isAuthenticated, (req, res) => {
         const movieId = req.params.id;
         const includeReviews = req.query.review === 'true';
 
@@ -248,7 +248,66 @@ router.route('/movies')
             .catch(err => {
                 res.status(500).json({ message: "Error fetching movie", error: err });
             });
+    })*/
+
+    .get(authJwtController.isAuthenticated, (req, res) => {
+        const movieId = req.params.id;
+        const includeReviews = req.query.review === 'true';
+    
+        if (includeReviews) {
+            Movie.aggregate([
+                {
+                    $match: {'_id': mongoose.Types.ObjectId(movieId)}
+                },
+                {
+                    $lookup: {
+                        from: 'reviews',
+                        localField: '_id',
+                        foreignField: 'movieId',
+                        as: 'reviews'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$reviews',
+                        preserveNullAndEmptyArrays: true // Preserves movies without reviews
+                    }
+                },
+                {
+                    $group: {
+                        _id: '$_id',
+                        title: { $first: '$title' }, // Preserving other fields if necessary
+                        reviews: { $push: '$reviews' },
+                        averageRating: { $avg: '$reviews.rating' }
+                    }
+                },
+                {
+                    $sort: { averageRating: -1 } // Sort by averageRating descending
+                }
+            ]).exec(function(err, result) {
+                if (err) {
+                    console.error("Aggregation error:", err);
+                    return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
+             
+                } else {
+                    res.json(result);
+                }
+            });
+    
+        } else {
+            Movie.findById(movieId)
+                .then(movie => {
+                    if (!movie) {
+                        return res.status(404).json({ message: "Movie not found" });
+                    }
+                    res.json(movie);
+                })
+                .catch(err => {
+                    res.status(500).json({ message: "Error fetching movie", error: err });
+                });
+        }
     })
+    
 
     .put(authJwtController.isAuthenticated, (req, res) => {
         // Using req.params.id to get the movie ID from the URL parameter
