@@ -205,6 +205,7 @@ router.route('/movies')
         res.status(405).send({ message: 'HTTP method not supported.' });
     });
 
+    /*
     router.route('/movies/:id')
     .get(authJwtController, (req, res) => {
         const movieId = req.params.id;
@@ -249,8 +250,8 @@ router.route('/movies')
         }
     })
    
-    /********* */
-    /*.put(authJwtController, (req, res) => {
+   
+    .put(authJwtController, (req, res) => {
         // Update the movie
         Movie.findOneAndUpdate(
             { _id: req.params.id },
