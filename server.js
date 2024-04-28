@@ -203,8 +203,8 @@ router.route('/movies')
         // Returns a message stating that the HTTP method is unsupported.
         res.status(405).send({ message: 'HTTP method not supported.' });
     });
-
-    router.get('/movies/:id', (req, res) => {
+    router.route('/movies/:id')
+    .get(authJwtController, (req, res) => {
         const movieId = req.params.id;
         const includeReviews = req.query.review === 'true';
 
@@ -245,6 +245,8 @@ router.route('/movies')
                 res.status(500).json({ message: "Error fetching movie", error: err });
             });
     });
+
+
 
     
 app.use('/', router);
