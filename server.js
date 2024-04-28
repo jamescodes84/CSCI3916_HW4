@@ -285,6 +285,14 @@ router.route('/movies')
 
     .get(authJwtController.isAuthenticated, (req, res) => {
 
+
+        Movie.find()
+            .then(movies => {
+                res.json(movies);
+            })
+            .catch(err => {
+                res.status(500).json({ message: "Error fetching movies", error: err });
+            });
     const includeReviews = req.query.reviews;
 
     if (includeReviews) {
