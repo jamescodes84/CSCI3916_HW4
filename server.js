@@ -248,20 +248,20 @@ router.route('/movies')
                 res.json({ message: "Movie Updated", movie: movie });
             }
         );
-    })
+    });
 
-        Movie.findById(movieId)
-            .then(movie => {
-                if (!movie) {
-                    return res.status(404).json({ message: "Movie not found" });
-                }
-                res.json(movie);
-            })
-            .catch(err => {
-                res.status(500).json({ message: "Error fetching movie", error: err });
-            });
+    Movie.findById(movieId)
+        .then(movie => {
+            if (!movie) {
+                return res.status(404).json({ message: "Movie not found" });
+            }
+            res.json(movie);
+        })
+        .catch(err => {
+            res.status(500).json({ message: "Error fetching movie", error: err });
+        });
     
-
+        
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
