@@ -249,17 +249,21 @@ router.route('/movies')
     })
 
     .put(authJwtController.isAuthenticated, (req, res) => {
-        Movie.findOneAndUpdate(
-            { movieId: req.body.movieId },
-            req.body,
-            { new: true, upsert: true },
-            function(err, movie) {
-                if (err) {
-                    return res.status(500).send(err);
-                }
-                res.json({ message: "Movie Updated", movie: movie });
+        // Using req.params.id to get the movie ID from the URL parameter
+    Movie.findOneAndUpdate(
+        { _id: req.params.id },  // Use _id to find the document
+        req.body,  // Update the document with the data sent in the request body
+        { new: true, upsert: false },  // Return the updated document and do not create a new one if it doesn't exist
+        function(err, movie) {
+            if (err) {
+                return res.status(500).send(err);
             }
-        );
+            if (!movie) {
+                return res.status(404).send({ message: "Movie not found" });
+            }
+            res.json({ message: "Movie Updated", movie: movie });
+        }
+    );
     });
 /*
     router.put('/movies/:id', (req,res)=>{
