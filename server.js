@@ -110,12 +110,62 @@ router.post('/signin', function(req, res) {
 /********** MOVIES *************/
 router.route('/movies')
     .get(authJwtController.isAuthenticated,(req, res) => {
-        Movie.find(function(err, movies){
+        const includeReviews = req.query.review === 'true';
+
+    if (includeReviews) {
+        Movie.aggregate([
+            {
+                $lookup: {
+                    from: 'reviews',
+                    localField: '_id',
+                    foreignField: 'movieId',
+                    as: 'reviews'
+                }
+            },
+            {
+                $addFields: {
+                    averageRating: { $avg: "$reviews.rating" }
+                }
+            },
+            {
+                $sort: { averageRating: -1 } // Sort by the average rating in descending order
+            }
+        ]).exec(function(err, movies) {
             if (err) {
-                res.status(500).send(err);
-            } 
-            res.json(movies);
-        })
+                console.error("Aggregation error:", err);
+                return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
+            } else {
+                res.json(movies);
+            }
+        });
+    } else {
+        Movie.find()
+            .then(movies => {
+                res.json(movies);
+            })
+            .catch(err => {
+                res.status(500).json({ message: "Error fetching movies", error: err });
+            });
+    }
+})
+
+
+    .put(authJwtController.isAuthenticated, (req, res) => {
+        // Using req.params.id to get the movie ID from the URL parameter
+    Movie.findOneAndUpdate(
+        { _id: req.params.id },  // Use _id to find the document
+        req.body,  // Update the document with the data sent in the request body
+        { new: true, upsert: false },  // Return the updated document and do not create a new one if it doesn't exist
+        function(err, movie) {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            if (!movie) {
+                return res.status(404).send({ message: "Movie not found" });
+            }
+            res.json({ message: "Movie Updated", movie: movie });
+        }
+    );
         
     })
 
