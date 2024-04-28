@@ -235,7 +235,7 @@ router.route('/movies')
 
         }
 
-        router.route('/movies/:id', (req, res) => {
+        router.put(authJwtController, (req, res) => {
             Movie.findOneAndUpdate(
                 { movieId: req.body.movieId },
                 req.body,
