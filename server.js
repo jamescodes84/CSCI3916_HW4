@@ -211,34 +211,45 @@ router.route('/movies')
         const includeReviews = req.query.review === 'true';
 
         if (includeReviews) {
-           
+            // Aggregation to fetch movies with reviews
             Movie.aggregate([
                 {
-                    $match: {'_id': mongoose.Types.ObjectId(req.params.id)}
+                    $match: {'_id': mongoose.Types.ObjectId(movieId)}
                 },
                 {
-                  $lookup: {
-                    from: 'reviews',
-                    localField: '_id',
-                    foreignField: 'movieId',
-                    as: 'reviews'
-                  }
+                    $lookup: {
+                        from: 'reviews',
+                        localField: '_id',
+                        foreignField: 'movieId',
+                        as: 'reviews'
+                    }
                 }
-              ]).exec(function(err, result) {
+            ]).exec(function(err, result) {
                 if (err) {
                     console.error("Aggregation error:", err);
                     return res.status(500).json({ success: "False", message: "Error retrieving movie with reviews", error: err });
-             
                 } else {
                     res.json(result);
                 }
-              });
-
+            });
+        } else {
+            // Fetching movie without reviews
+            Movie.findById(movieId)
+                .then(movie => {
+                    if (!movie) {
+                        return res.status(404).json({ message: "Movie not found" });
+                    }
+                    res.json(movie);
+                })
+                .catch(err => {
+                    res.status(500).json({ message: "Error fetching movie", error: err });
+                });
         }
     })
     .put(authJwtController, (req, res) => {
+        // Update the movie
         Movie.findOneAndUpdate(
-            { movieId: req.body.movieId },
+            { _id: req.params.id },
             req.body,
             { new: true, upsert: true },
             function(err, movie) {
@@ -249,6 +260,7 @@ router.route('/movies')
             }
         );
     });
+
 
     Movie.findById(movieId)
         .then(movie => {
